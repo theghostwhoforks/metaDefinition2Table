@@ -1,0 +1,12 @@
+{
+    "form": {
+        "bind_type": "some_field",
+        "default_bind_path": "/model/instance/some_field/",
+        "fields": [
+            {
+                "name": "ooga",
+                "bind": "/model/instance/some_field/ooga"
+            }
+       ]
+    }
+}
