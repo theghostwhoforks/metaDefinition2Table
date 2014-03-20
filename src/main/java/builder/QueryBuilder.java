@@ -1,8 +1,8 @@
 package builder;
 
 import model.FormDefinition;
+import model.Query;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 public class QueryBuilder {
@@ -17,13 +17,10 @@ public class QueryBuilder {
         this.formDefinition = formDefinition;
     }
 
-    public String build(){
-        // CREATE TABLE FORM_NAME {
-        // A INT,
-        // B TEXT
-        // }
+    public Query build(){
         final String formName = formDefinition.getName();
         Function<String,String> converter = (str) -> String.format("CREATE TABLE %s (%s)",formName,str);
-        return converter.apply(formDefinition.getForm().getFields().stream().map((f) -> String.format("%s text", f.getName())).reduce((x, y) -> x + "," + y).get());
+        String statement = converter.apply(formDefinition.getForm().getFields().stream().map(f -> String.format("%s text", f.getName())).reduce((x, y) -> x + "," + y).get());
+        return new Query(statement);
     }
 }
