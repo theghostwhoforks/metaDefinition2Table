@@ -23,7 +23,7 @@ public class QueryBuilder {
         // B TEXT
         // }
         final String formName = formDefinition.getName();
-        Function<String,String> converter = (str) -> String.format("CREATE TABLE %s {%s}",formName,str);
+        Function<String,String> converter = (str) -> String.format("CREATE TABLE %s (%s)",formName,str);
         return converter.apply(formDefinition.getForm().getFields().stream().map((f) -> String.format("%s text", f.getName())).reduce((x, y) -> x + "," + y).get());
     }
 }
