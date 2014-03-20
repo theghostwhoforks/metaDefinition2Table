@@ -7,10 +7,14 @@ import java.util.List;
 
 public class Form {
     @SerializedName(value = "bind_type")
-    private String bind;
+    private String name;
     private List<Field> fields = new ArrayList<>();
 
     public List<Field> getFields() {
         return fields;
+    }
+
+    public String getName() {
+        return name;
     }
 }

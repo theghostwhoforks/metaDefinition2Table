@@ -6,4 +6,8 @@ public class FormDefinition {
     public Form getForm() {
         return form;
     }
+
+    public String getName() {
+        return form.getName();
+    }
 }
