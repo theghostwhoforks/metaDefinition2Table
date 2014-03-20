@@ -5,6 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,6 +18,11 @@ public class FieldTest {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
         FormDefinition definition = new Gson().fromJson(data, FormDefinition.class);
         assertNotNull(definition);
-        assertEquals(1,definition.getForm().getFields().size());
+        List<Field> fields = definition.getForm().getFields();
+        assertEquals(49, fields.size());
+        Optional<Field> fieldOptional = fields.stream().findFirst();
+        boolean isFieldPresent = fieldOptional.isPresent();
+        assertEquals(true, isFieldPresent);
+        assertEquals("formhub", fieldOptional.get().getName());
     }
 }

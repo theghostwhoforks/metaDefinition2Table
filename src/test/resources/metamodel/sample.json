@@ -1,12 +1,204 @@
 {
     "form": {
-        "bind_type": "some_field",
-        "default_bind_path": "/model/instance/some_field/",
+        "bind_type": "delivery_details_and_pnc1",
+        "default_bind_path": "/model/instance/delivery_details_and_pnc1",
         "fields": [
             {
-                "name": "ooga",
-                "bind": "/model/instance/some_field/ooga"
+                "name": "formhub",
+                "bind": "/model/instance/delivery_details_and_pnc1/formhub"
+            },
+            {
+                "name": "uuid",
+                "bind": "/model/instance/delivery_details_and_pnc1/formhub/uuid"
+            },
+            {
+                "name": "today",
+                "bind": "/model/instance/delivery_details_and_pnc1/today"
+            },
+            {
+                "name": "sectionA",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA"
+            },
+            {
+                "name": "pregnancyId",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/pregnancyId"
+            },
+            {
+                "name": "womanId",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/womanId"
+            },
+            {
+                "name": "healthWorker",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/healthWorker"
+            },
+            {
+                "name": "visitDate",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/visitDate"
+            },
+            {
+                "name": "visitTime",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/visitTime"
+            },
+            {
+                "name": "sectionB",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB"
+            },
+            {
+                "name": "health",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/health"
+            },
+            {
+                "name": "healthOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/healthOther"
+            },
+            {
+                "name": "healthReferal",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/healthReferal"
+            },
+            {
+                "name": "deliveryType",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/deliveryType"
+            },
+            {
+                "name": "stiches",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/stiches"
+            },
+            {
+                "name": "stichesLoose",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/stichesLoose"
+            },
+            {
+                "name": "discharge",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/discharge"
+            },
+            {
+                "name": "dischagreYes",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionB/dischagreYes"
+            },
+            {
+                "name": "sectionC",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC"
+            },
+            {
+                "name": "deliveryPlace",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/deliveryPlace"
+            },
+            {
+                "name": "placeOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/placeOther"
+            },
+            {
+                "name": "hospital",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/hospital"
+            },
+            {
+                "name": "placeGovernmentFacility",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/placeGovernmentFacility"
+            },
+            {
+                "name": "placePrivateFacility",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/placePrivateFacility"
+            },
+            {
+                "name": "jsy",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/jsy"
+            },
+            {
+                "name": "birthAttendant",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/birthAttendant"
+            },
+            {
+                "name": "homeBirth",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/homeBirth"
+            },
+            {
+                "name": "homeBirthOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/homeBirthOther"
+            },
+            {
+                "name": "laborTime",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/laborTime"
+            },
+            {
+                "name": "vitaminA",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/vitaminA"
+            },
+            {
+                "name": "complications",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/complications"
+            },
+            {
+                "name": "complicationsStillBirth",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/complicationsStillBirth"
+            },
+            {
+                "name": "complicationsOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionC/complicationsOther"
+            },
+            {
+                "name": "sectionE",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionE"
+            },
+            {
+                "name": "breastfeedingProblems",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionE/breastfeedingProblems"
+            },
+            {
+                "name": "breastfeedingProblemsOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionE/breastfeedingProblemsOther"
+            },
+            {
+                "name": "breastfeedingProblemsCounsel",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionE/breastfeedingProblemsCounsel"
+            },
+            {
+                "name": "breastfeedingProblemsInfection",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionE/breastfeedingProblemsInfection"
+            },
+            {
+                "name": "sectionF",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF"
+            },
+            {
+                "name": "ifaSupplier",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/ifaSupplier"
+            },
+            {
+                "name": "ifaTablets",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/ifaTablets"
+            },
+            {
+                "name": "calciumSupplier",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/calciumSupplier"
+            },
+            {
+                "name": "calciumTablets",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/calciumTablets"
+            },
+            {
+                "name": "consumptionQuantity",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/consumptionQuantity"
+            },
+            {
+                "name": "consumptionReasons",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/consumptionReasons"
+            },
+            {
+                "name": "consumptionReasonsOther",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionF/consumptionReasonsOther"
+            },
+            {
+                "name": "timeOut",
+                "bind": "/model/instance/delivery_details_and_pnc1/timeOut"
+            },
+            {
+                "name": "meta",
+                "bind": "/model/instance/delivery_details_and_pnc1/meta"
+            },
+            {
+                "name": "instanceID",
+                "bind": "/model/instance/delivery_details_and_pnc1/meta/instanceID"
             }
-       ]
+        ]
     }
 }
