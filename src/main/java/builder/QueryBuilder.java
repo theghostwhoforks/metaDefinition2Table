@@ -7,19 +7,22 @@ import model.Query;
 import java.util.function.Function;
 
 public class QueryBuilder {
-    private final String dataAsJson;
+    private String formDefinition;
 
-
-    public static QueryBuilder formDefinition(String dataAsJson){
-        return new QueryBuilder(dataAsJson);
+    public static QueryBuilder with(){
+        return new QueryBuilder();
     }
 
-    private QueryBuilder(String dataAsJson) {
-        this.dataAsJson = dataAsJson;
+    private QueryBuilder() {}
+
+    public QueryBuilder formDefinition(String dataAsJson){
+        this.formDefinition = dataAsJson;
+        return this;
     }
+
 
     public Query build(){
-        FormDefinition definition = new Gson().fromJson(dataAsJson, FormDefinition.class);
+        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
         Function<String,String> converter = str -> String.format("CREATE TABLE %s (%s)",formName,str);
         String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s text", f.getName())).
@@ -27,7 +30,7 @@ public class QueryBuilder {
         return new Query(statement);
     }
 
-    public static Query empty() {
+    public Query nothing() {
         return new Query("");
     }
 }

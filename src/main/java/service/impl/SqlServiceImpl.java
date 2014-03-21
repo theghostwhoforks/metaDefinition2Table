@@ -17,7 +17,7 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public boolean createTable(Connection connection, String data) {
-        Query query = QueryBuilder.formDefinition(data).build();
+        Query query = QueryBuilder.with().formDefinition(data).build();
         return executor.createTable(query,connection);
     }
 }

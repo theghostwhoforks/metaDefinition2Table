@@ -1,23 +1,26 @@
 package executor.impl;
 
 import builder.QueryBuilder;
+import exception.MetaDataServiceRuntimeException;
 import model.Query;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.rules.ExpectedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class StatementExecutorImplTest {
 
     private StatementExecutorImpl executor;
     private Connection connection;
+
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -27,10 +30,17 @@ public class StatementExecutorImplTest {
 
     @Test
     public void shouldCreateTable() throws SQLException {
-        Query emptyQuery = QueryBuilder.empty();
         PreparedStatement statement = mock(PreparedStatement.class);
-        when(connection.prepareStatement("")).thenReturn(statement);
-        executor.createTable(emptyQuery, connection);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.createTable(QueryBuilder.with().nothing(), connection);
         verify(statement).execute();
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage("There was an error while creating a table.");
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.createTable(QueryBuilder.with().nothing(), connection);
     }
 }
