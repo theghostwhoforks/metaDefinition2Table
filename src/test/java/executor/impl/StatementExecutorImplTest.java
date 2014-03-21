@@ -1,8 +1,8 @@
 package executor.impl;
 
 import builder.QueryBuilder;
+import constant.Messages;
 import exception.MetaDataServiceRuntimeException;
-import model.Query;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class StatementExecutorImplTest {
     @Test
     public void shouldThrowAnExceptionWhenStatementExecutionFails() throws SQLException {
         thrown.expect(MetaDataServiceRuntimeException.class);
-        thrown.expectMessage("There was an error while creating a table.");
+        thrown.expectMessage(Messages.CREATE_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
         executor.createTable(QueryBuilder.with().nothing(), connection);
     }

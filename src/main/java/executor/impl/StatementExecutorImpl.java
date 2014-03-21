@@ -1,5 +1,6 @@
 package executor.impl;
 
+import constant.Messages;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
@@ -16,7 +17,7 @@ public class StatementExecutorImpl implements StatementExecutor {
             PreparedStatement statement = connection.prepareStatement(query.asSql());
             return statement.execute();
         } catch (SQLException e) {
-            throw new MetaDataServiceRuntimeException("There was an error while creating a table.",e);
+            throw new MetaDataServiceRuntimeException(Messages.CREATE_TABLE_ERROR,e);
         }
     }
 }
