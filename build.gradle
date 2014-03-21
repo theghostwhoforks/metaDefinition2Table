@@ -6,7 +6,7 @@ repositories{
 }
 
 dependencies{
-    compile 'log4j:log4j:1.2.13'
+    compile 'log4j:log4j:1.2.17'
     compile 'com.google.code.gson:gson:2.2.4'
     testCompile 'junit:junit:4.8.2'
     testCompile 'org.apache.commons:commons-io:1.3.2'
