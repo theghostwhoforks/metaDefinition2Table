@@ -26,4 +26,8 @@ public class QueryBuilder {
                                            reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
     }
+
+    public static Query empty() {
+        return new Query("");
+    }
 }
