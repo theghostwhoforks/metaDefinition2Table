@@ -31,4 +31,11 @@ public class SqlServiceTest {
         service.createTable(connection,data);
         verify(executor).createTable(new Query("CREATE TABLE OOGA (BOOGA text)"), connection);
     }
+
+    @Test
+    public void shouldInsertIntoAATable() throws SQLException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
+        service.insertIntoATable(connection,data);
+        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST')"), connection);
+    }
 }

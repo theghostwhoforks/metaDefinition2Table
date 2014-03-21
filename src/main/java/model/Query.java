@@ -8,7 +8,7 @@ public class Query {
         this.statement = statement;
     }
 
-    public String asSql(){
+    public String asSql() {
         return statement;
     }
 

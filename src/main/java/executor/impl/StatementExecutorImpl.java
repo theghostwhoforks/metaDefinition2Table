@@ -4,6 +4,7 @@ import constant.Messages;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -15,15 +16,27 @@ public class StatementExecutorImpl implements StatementExecutor {
 
     @Override
     public boolean createTable(Query query, Connection connection) {
+        BasicConfigurator.configure();
         String sql = query.asSql();
-        logger.info(String.format("Creating table. Query - %s",sql));
+        logger.info(String.format("Creating table. Query - %s", sql));
+        return executeQuery(connection, sql, Messages.CREATE_TABLE_ERROR);
+    }
 
+    private boolean executeQuery(Connection connection, String sql,String message) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             return statement.execute();
         } catch (SQLException e) {
-            logger.error(String.format("There was an error while creating a table. Offending query  -%s",sql));
-            throw new MetaDataServiceRuntimeException(Messages.CREATE_TABLE_ERROR,e);
+            logger.error(message);
+            throw new MetaDataServiceRuntimeException(message, e);
         }
+    }
+
+    @Override
+    public boolean insertIntoTable(Query query, Connection connection) {
+        BasicConfigurator.configure();
+        String sql = query.asSql();
+        logger.info(String.format("Inserting into table. Query - %s", sql));
+        return executeQuery(connection, sql,Messages.INSERT_INTO_TABLE_ERROR);
     }
 }
