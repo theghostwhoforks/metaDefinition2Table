@@ -15,8 +15,7 @@ public class QueryBuilderTest {
     @Test
     public void shouldBuildAQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        FormDefinition definition = new Gson().fromJson(data, FormDefinition.class);
-        Query query = QueryBuilder.formDefinition(definition).build();
+        Query query = QueryBuilder.formDefinition(data).build();
         assertNotNull(query);
     }
 }
