@@ -5,14 +5,13 @@ import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class StatementExecutorImpl implements StatementExecutor {
-    private static Logger logger = Logger.getLogger(StatementExecutor.class);
+    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StatementExecutor.class);
 
     @Override
     public boolean createTable(Query query, Connection connection) {
@@ -28,7 +27,7 @@ public class StatementExecutorImpl implements StatementExecutor {
             return statement.execute();
         } catch (SQLException e) {
             logger.error(message);
-            throw new MetaDataServiceRuntimeException(message, e);
+            throw new MetaDataServiceRuntimeException(message,e);
         }
     }
 
