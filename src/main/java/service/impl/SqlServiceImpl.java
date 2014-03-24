@@ -32,6 +32,14 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
+    public boolean updateEntity(Connection connection, String data) {
+        BasicConfigurator.configure();
+        logger.info(String.format("UPDATING AN ENTITY. Data supplied - %s", data));
+        Query query = QueryBuilder.with().formDefinition(data).updateEntity();
+        return executor.updateEntity(query, connection);
+    }
+
+    @Override
     public boolean updateTable(Connection connection, String data) {
         BasicConfigurator.configure();
         logger.info(String.format("Updating Table. Data supplied - %s", data));

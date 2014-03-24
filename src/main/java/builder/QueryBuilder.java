@@ -28,7 +28,7 @@ public class QueryBuilder {
         final String formName = definition.getName();
         Function<String, String> converter = str -> String.format("CREATE TABLE %s (%s)", formName, str);
         String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s text", f.getName())).
-                                            reduce((x, y) -> x + "," + y).get());
+                reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
     }
 
@@ -39,22 +39,31 @@ public class QueryBuilder {
     public Query insert() {
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
-        Function<String, String> converter = (str) -> String.format("INSERT INTO %s ({FIELDS}) VALUES ('%s')", formName,str);
+        Function<String, String> converter = (str) -> String.format("INSERT INTO %s ({FIELDS}) VALUES ('%s')", formName, str);
         List<Field> fields = definition.getForm().getFields();
         String statement = converter.apply(fields.stream().filter(f -> f.getValue() != null).map(f -> String.format("%s", f.getValue()))
                 .reduce((x, y) -> x + "'" + ",'" + y).get());
         String fieldNames = fields.stream().filter(f -> f.getValue() != null).map(f -> String.format("%s", f.getName()))
                 .reduce((x, y) -> x + "," + y).get();
-        return new Query(statement.replace("{FIELDS}",fieldNames));
+        return new Query(statement.replace("{FIELDS}", fieldNames));
     }
 
     public Query update() {
-
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
         Function<String, String> converter = str -> String.format("ALTER TABLE %s %s", formName, str);
-        String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s text", "ADD COLUMN " + f.getName())).
+        String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s text", String.format("ADD COLUMN %s", f.getName()))).
                 reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
+    }
+
+    public Query updateEntity() {
+        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
+        final String formName = definition.getName();
+        final Integer entityId = definition.getForm().getEntityId();
+        String fieldNames = definition.getForm().getFields().stream().map(f -> String.format("%s", f.getName() + " = '" + f.getValue() + "'"))
+                .reduce((x, y) -> x + "," + y).get();
+        String statement = String.format("UPDATE %s SET {FIELD_NAMES} WHERE entityId = %s", formName,entityId);
+        return new Query(statement.replace("{FIELD_NAMES}",fieldNames));
     }
 }

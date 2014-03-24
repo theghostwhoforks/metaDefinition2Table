@@ -32,4 +32,13 @@ public class QueryBuilderTest {
         assertEquals(true, query.asSql().startsWith("ALTER TABLE "));
         assertEquals(true, query.asSql().contains("ADD COLUMN"));
     }
+
+    @Test
+    public void shouldBuildAnUpdateQueryToUpdateAnEntity() throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update.json")));
+        Query query = QueryBuilder.with().formDefinition(data).updateEntity();
+        assertEquals(true, query.asSql().startsWith("UPDATE "));
+        assertEquals(true, query.asSql().contains("SET"));
+        assertEquals(true, query.asSql().contains("WHERE"));
+    }
 }
