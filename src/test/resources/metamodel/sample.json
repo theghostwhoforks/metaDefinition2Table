@@ -27,9 +27,10 @@
                 "bind": "/model/instance/delivery_details_and_pnc1/sectionA/pregnancyId"
             },
             {
-                "name": "womanId",
-                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/womanId",
-                "value": "sample4"
+                "name": "delivery_details_and_pnc1.id",
+                "source": "delivery_details_and_pnc1.id",
+                "persistenceName": "id",
+                "value": "42"
             },
             {
                 "name": "healthWorker",

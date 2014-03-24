@@ -1,6 +1,7 @@
 package builder;
 
 import com.google.gson.Gson;
+import model.EntityField;
 import model.Field;
 import model.FormDefinition;
 import model.Query;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class QueryBuilder {
+    private static final String ENTITY_ID = "entityId";
     private String formDefinition;
 
     public static QueryBuilder with() {
@@ -45,10 +47,12 @@ public class QueryBuilder {
 
         List<String> columnNames = new ArrayList<>();
         List<String> values = new ArrayList<>();
-        fields.stream().filter(f -> f.hasValue()).forEach(f -> {
-                    columnNames.add(f.getName());
-                    values.add(String.format("'%s'",f.getValue()));
-                });
+        fields.stream().filter(f -> f.hasValue()).map(f -> String.format("%s.id",formName).equals(f.getName()) ?
+                                                            new EntityField(ENTITY_ID,f.getValue()) : f)
+              .forEach(f -> {
+                columnNames.add(f.getName());
+                values.add(String.format("'%s'", f.getValue()));
+            });
 
         String stringColumns = columnNames.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();
         String stringValues = values.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();

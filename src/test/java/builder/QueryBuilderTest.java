@@ -22,7 +22,7 @@ public class QueryBuilderTest {
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
         Query query = QueryBuilder.with().formDefinition(data).createEntity();
-        String expected = "INSERT INTO delivery_details_and_pnc1 (formhub,uuid,today,womanId) VALUES ('sample1','sample2','sample3','sample4');";
+        String expected = "INSERT INTO delivery_details_and_pnc1 (formhub,uuid,today,entityId) VALUES ('sample1','sample2','sample3','42');";
         assertEquals(expected, query.asSql());
     }
 }

@@ -1,13 +1,15 @@
 package model;
 
 public class Field {
-    private String name;
-    private String value;
+    protected String name;
+    protected String value;
 
-    public String getName() {
-        return name;
+    protected Field(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
+    public String getName() { return name; }
     public String getValue() { return value; }
 
     public boolean hasValue() {
