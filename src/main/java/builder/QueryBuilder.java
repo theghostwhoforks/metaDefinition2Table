@@ -27,7 +27,7 @@ public class QueryBuilder {
     public Query createTable() {
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
-        Function<String, String> converter = str -> String.format("CREATE TABLE %s (%s);", formName, str);
+        Function<String, String> converter = str -> String.format("CREATE TABLE %s (ID SERIAL PRIMARY KEY,%s);", formName, str);
         String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s VARCHAR(255)", f.getName())).
                 reduce((x, y) -> x + "," + y).get());
         return new Query(statement);

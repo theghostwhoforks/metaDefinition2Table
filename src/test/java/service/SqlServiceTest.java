@@ -29,13 +29,13 @@ public class SqlServiceTest {
     public void shouldCreateATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
         service.createTable(connection,data);
-        verify(executor).createTable(new Query("CREATE TABLE OOGA (BOOGA VARCHAR(255));"), connection);
+        verify(executor).createTable(new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,BOOGA VARCHAR(255));"), connection);
     }
 
     @Test
     public void shouldInsertIntoATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
         service.createEntity(connection, data);
-        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST')"), connection);
+        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');"), connection);
     }
 }
