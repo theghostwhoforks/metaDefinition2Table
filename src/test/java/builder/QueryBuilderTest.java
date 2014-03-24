@@ -11,35 +11,18 @@ import static junit.framework.Assert.assertEquals;
 public class QueryBuilderTest {
     @Test
     public void shouldBuildAQuery() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
         QueryBuilder queryBuilder = QueryBuilder.with().formDefinition(data);
-        Query query = queryBuilder.build();
-        assertEquals(true, query.asSql().startsWith("CREATE TABLE"));
+        Query query = queryBuilder.createTable();
+        String expected = "CREATE TABLE delivery_details_and_pnc1 (formhub VARCHAR(255),uuid VARCHAR(255),today VARCHAR(255),sectionA VARCHAR(255),pregnancyId VARCHAR(255),womanId VARCHAR(255));";
+        assertEquals(expected, query.asSql());
     }
 
     @Test
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        Query query = QueryBuilder.with().formDefinition(data).insert();
-        assertEquals(true, query.asSql().startsWith("INSERT INTO "));
-        assertEquals(true, query.asSql().contains("VALUES"));
-    }
-
-    @Test
-    public void shouldBuildAnUpdateTableQuery() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        Query query = QueryBuilder.with().formDefinition(data).update();
-        assertEquals(true, query.asSql().startsWith("ALTER TABLE "));
-        assertEquals(true, query.asSql().contains("ADD COLUMN"));
-    }
-
-    @Test
-    public void shouldBuildAnUpdateQueryToUpdateAnEntity() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update.json")));
-        Query query = QueryBuilder.with().formDefinition(data).updateEntity();
-        assertEquals(true, query.asSql().startsWith("UPDATE "));
-        assertEquals(true, query.asSql().contains("SET"));
-        assertEquals(true, query.asSql().contains("WHERE"));
-
+        Query query = QueryBuilder.with().formDefinition(data).createEntity();
+        String expected = "INSERT INTO delivery_details_and_pnc1 (formhub,uuid,today,womanId) VALUES ('sample1','sample2','sample3','sample4');";
+        assertEquals(expected, query.asSql());
     }
 }

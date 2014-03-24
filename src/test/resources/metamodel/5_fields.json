@@ -1,0 +1,36 @@
+{
+    "form": {
+        "bind_type": "delivery_details_and_pnc1",
+        "default_bind_path": "/model/instance/delivery_details_and_pnc1",
+        "fields": [
+            {
+                "name": "formhub",
+                "bind": "/model/instance/delivery_details_and_pnc1/formhub",
+                "value": "sample1"
+            },
+            {
+                "name": "uuid",
+                "bind": "/model/instance/delivery_details_and_pnc1/formhub/uuid",
+                "value": "sample2"
+            },
+            {
+                "name": "today",
+                "bind": "/model/instance/delivery_details_and_pnc1/today",
+                "value": "sample3"
+            },
+            {
+                "name": "sectionA",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA"
+            },
+            {
+                "name": "pregnancyId",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/pregnancyId"
+            },
+            {
+                "name": "womanId",
+                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/womanId",
+                "value": "sample4"
+            }
+        ]
+    }
+}

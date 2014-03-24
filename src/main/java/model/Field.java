@@ -9,4 +9,8 @@ public class Field {
     }
 
     public String getValue() { return value; }
+
+    public boolean hasValue() {
+        return value != null;
+    }
 }

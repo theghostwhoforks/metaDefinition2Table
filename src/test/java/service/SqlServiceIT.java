@@ -1,7 +1,6 @@
 package service;
 
 import executor.impl.StatementExecutorImpl;
-import org.h2.tools.DeleteDbFiles;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,14 +10,13 @@ import java.sql.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class ServiceIntegrationTest {
+public class SqlServiceIT {
 
     private Connection connection;
     private Statement statement;
 
     @Before
     public void setUp() throws Exception {
-        DeleteDbFiles.execute("~", "OOGA", true);
         Class.forName("org.h2.Driver");
         connection = DriverManager.getConnection("jdbc:h2:~/test");
         statement = connection.createStatement();
@@ -26,13 +24,23 @@ public class ServiceIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
-        statement.execute("DROP TABLE OOGA;");
+        statement.execute("DROP TABLE OOGA");
         statement.close();
         connection.close();
     }
 
     @Test
     public void shouldCreateATable() throws SQLException, ClassNotFoundException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, data);
+
+        int count = statement.executeUpdate("INSERT INTO OOGA (BOOGA) VALUES ('sample')");
+        assertEquals(1, count);
+    }
+
+    @Test
+    public void shouldInsertIntoATable() throws SQLException, ClassNotFoundException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"sample\"}]}}";
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
@@ -47,5 +55,4 @@ public class ServiceIntegrationTest {
         }
         assertEquals(2, count);
     }
-
 }

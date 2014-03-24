@@ -36,20 +36,6 @@ public class SqlServiceTest {
     public void shouldInsertIntoATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
         service.createEntity(connection, data);
-        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');"), connection);
-    }
-
-    @Test
-    public void shouldUpdateATable() throws SQLException {
-        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
-        service.updateTable(connection, data);
-        verify(executor).updateTable(new Query("ALTER TABLE OOGA ADD COLUMN BOOGA text;"), connection);
-    }
-
-    @Test
-    public void shouldUpdateAnEntity() throws SQLException {
-        String data = "{\"form\" : {\"bind_type\" : \"OOGA\",\"entity_id\" : 1, \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"sample\"}]}}";
-        service.updateEntity(connection, data);
-        verify(executor).updateEntity(new Query("UPDATE OOGA SET BOOGA = 'sample' WHERE entityId = 1;"),connection);
+        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST')"), connection);
     }
 }
