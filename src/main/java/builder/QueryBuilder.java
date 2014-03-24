@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 public class QueryBuilder {
     private static final String ENTITY_ID = "entityId";
+    private static String defaultsForCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255)",ENTITY_ID);
     private String formDefinition;
 
     public static QueryBuilder with() {
@@ -29,7 +30,7 @@ public class QueryBuilder {
     public Query createTable() {
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
-        Function<String, String> converter = str -> String.format("CREATE TABLE %s (ID SERIAL PRIMARY KEY,%s VARCHAR(255),%s);", formName, ENTITY_ID,str);
+        Function<String, String> converter = str -> String.format("CREATE TABLE %s (%s,%s);", formName, defaultsForCreate,str);
         String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s VARCHAR(255)", f.getName())).
                 reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
@@ -50,9 +51,9 @@ public class QueryBuilder {
         fields.stream().filter(f -> f.hasValue()).map(f -> String.format("%s.id",formName).equals(f.getName()) ?
                                                             new EntityField(ENTITY_ID,f.getValue()) : f)
               .forEach(f -> {
-                columnNames.add(f.getName());
-                values.add(String.format("'%s'", f.getValue()));
-            });
+                  columnNames.add(f.getName());
+                  values.add(String.format("'%s'", f.getValue()));
+              });
 
         String stringColumns = columnNames.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();
         String stringValues = values.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();
