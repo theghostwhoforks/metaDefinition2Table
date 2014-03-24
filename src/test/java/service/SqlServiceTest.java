@@ -35,7 +35,14 @@ public class SqlServiceTest {
     @Test
     public void shouldInsertIntoAATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
-        service.insertIntoATable(connection,data);
+        service.createEntity(connection, data);
         verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST')"), connection);
+    }
+
+    @Test
+    public void shouldUpdateATable() throws SQLException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
+        service.updateTable(connection, data);
+        verify(executor).updateTable(new Query("ALTER TABLE OOGA ADD COLUMN BOOGA text"), connection);
     }
 }

@@ -20,8 +20,16 @@ public class QueryBuilderTest {
     @Test
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        Query query = QueryBuilder.with().insert(data);
+        Query query = QueryBuilder.with().formDefinition(data).insert();
         assertEquals(true, query.asSql().startsWith("INSERT INTO "));
         assertEquals(true, query.asSql().contains("VALUES"));
+    }
+
+    @Test
+    public void shouldBuildAnUpdateTableQuery() throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
+        Query query = QueryBuilder.with().formDefinition(data).update();
+        assertEquals(true, query.asSql().startsWith("ALTER TABLE "));
+        assertEquals(true, query.asSql().contains("ADD COLUMN"));
     }
 }

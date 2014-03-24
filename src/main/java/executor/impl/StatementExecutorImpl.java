@@ -38,4 +38,12 @@ public class StatementExecutorImpl implements StatementExecutor {
         logger.info(String.format("Inserting into table. Query - %s", sql));
         return executeQuery(connection, sql,Messages.INSERT_INTO_TABLE_ERROR);
     }
+
+    @Override
+    public boolean updateTable(Query query, Connection connection) {
+        BasicConfigurator.configure();
+        String sql = query.asSql();
+        logger.info(String.format("updating table. Query - %s", sql));
+        return executeQuery(connection, sql,Messages.UPDATE_TABLE_ERROR);
+    }
 }

@@ -59,4 +59,20 @@ public class StatementExecutorImplTest {
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
         executor.insertIntoTable(QueryBuilder.with().nothing(), connection);
     }
+
+    @Test
+    public void shouldUpdateTable() throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.updateTable(QueryBuilder.with().nothing(), connection);
+        verify(statement).execute();
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenUpdateStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage(Messages.UPDATE_TABLE_ERROR);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.updateTable(QueryBuilder.with().nothing(), connection);
+    }
 }

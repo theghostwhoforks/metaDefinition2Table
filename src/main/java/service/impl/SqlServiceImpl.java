@@ -23,10 +23,19 @@ public class SqlServiceImpl implements SqlService {
         return executor.createTable(query, connection);
     }
 
-    public boolean insertIntoATable(Connection connection, String data) {
+    @Override
+    public boolean createEntity(Connection connection, String data) {
         BasicConfigurator.configure();
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
-        Query query = QueryBuilder.with().insert(data);
+        Query query = QueryBuilder.with().formDefinition(data).insert();
         return executor.insertIntoTable(query, connection);
+    }
+
+    @Override
+    public boolean updateTable(Connection connection, String data) {
+        BasicConfigurator.configure();
+        logger.info(String.format("Updating Table. Data supplied - %s", data));
+        Query query = QueryBuilder.with().formDefinition(data).update();
+        return executor.updateTable(query, connection);
     }
 }

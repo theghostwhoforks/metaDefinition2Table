@@ -36,8 +36,8 @@ public class QueryBuilder {
         return new Query("");
     }
 
-    public Query insert(String data) {
-        FormDefinition definition = new Gson().fromJson(data, FormDefinition.class);
+    public Query insert() {
+        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
         Function<String, String> converter = (str) -> String.format("INSERT INTO %s ({FIELDS}) VALUES ('%s')", formName,str);
         List<Field> fields = definition.getForm().getFields();
@@ -46,5 +46,15 @@ public class QueryBuilder {
         String fieldNames = fields.stream().filter(f -> f.getValue() != null).map(f -> String.format("%s", f.getName()))
                 .reduce((x, y) -> x + "," + y).get();
         return new Query(statement.replace("{FIELDS}",fieldNames));
+    }
+
+    public Query update() {
+
+        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
+        final String formName = definition.getName();
+        Function<String, String> converter = str -> String.format("ALTER TABLE %s %s", formName, str);
+        String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s text", "ADD COLUMN " + f.getName())).
+                reduce((x, y) -> x + "," + y).get());
+        return new Query(statement);
     }
 }
