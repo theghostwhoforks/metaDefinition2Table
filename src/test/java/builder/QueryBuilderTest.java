@@ -14,7 +14,7 @@ public class QueryBuilderTest {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
         QueryBuilder queryBuilder = QueryBuilder.with().formDefinition(data);
         Query query = queryBuilder.createTable();
-        String expected = "CREATE TABLE delivery_details_and_pnc1 (ID SERIAL PRIMARY KEY,formhub VARCHAR(255),uuid VARCHAR(255),today VARCHAR(255),sectionA VARCHAR(255),pregnancyId VARCHAR(255),womanId VARCHAR(255));";
+        String expected = "CREATE TABLE delivery_details_and_pnc1 (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),formhub VARCHAR(255),uuid VARCHAR(255),today VARCHAR(255),sectionA VARCHAR(255),pregnancyId VARCHAR(255),womanId VARCHAR(255));";
         assertEquals(expected, query.asSql());
     }
 
