@@ -40,5 +40,6 @@ public class QueryBuilderTest {
         assertEquals(true, query.asSql().startsWith("UPDATE "));
         assertEquals(true, query.asSql().contains("SET"));
         assertEquals(true, query.asSql().contains("WHERE"));
+
     }
 }
