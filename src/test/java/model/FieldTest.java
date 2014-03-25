@@ -1,6 +1,7 @@
 package model;
 
 import com.google.gson.Gson;
+import constant.Constants;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -24,5 +25,27 @@ public class FieldTest {
         boolean isFieldPresent = fieldOptional.isPresent();
         assertEquals(true, isFieldPresent);
         assertEquals("formhub", fieldOptional.get().getName());
+    }
+
+    @Test
+    public void shouldIgnoreFieldsWithReservedKeywords() throws Exception {
+        Constants.RESERVED_KEYWORDS.stream().forEach(name -> {
+            Field field = new FieldStub(name,"42");
+            assertEquals(false,field.isNotReservedKeyword());
+        });
+    }
+
+    @Test
+    public void shouldAllowFieldWithoutAnyReservedKeywords() throws Exception {
+        Field field = new FieldStub("surveyId","42");
+        assertEquals(true,field.isNotReservedKeyword());
+    }
+
+}
+
+class FieldStub extends Field {
+
+    public FieldStub(String name, String value) {
+        super(name, value);
     }
 }

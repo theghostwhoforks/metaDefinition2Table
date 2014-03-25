@@ -1,7 +1,7 @@
 package executor.impl;
 
 import builder.QueryBuilder;
-import constant.Messages;
+import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,7 +39,7 @@ public class StatementExecutorImplTest {
     @Test
     public void shouldThrowAnExceptionWhenStatementExecutionFails() throws SQLException {
         thrown.expect(MetaDataServiceRuntimeException.class);
-        thrown.expectMessage(Messages.CREATE_TABLE_ERROR);
+        thrown.expectMessage(Constants.CREATE_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
         executor.createTable(QueryBuilder.with().nothing(), connection);
     }
@@ -55,7 +55,7 @@ public class StatementExecutorImplTest {
     @Test
     public void shouldThrowAnExceptionWhenInsertStatementExecutionFails() throws SQLException {
         thrown.expect(MetaDataServiceRuntimeException.class);
-        thrown.expectMessage(Messages.INSERT_INTO_TABLE_ERROR);
+        thrown.expectMessage(Constants.INSERT_INTO_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
         executor.insertIntoTable(QueryBuilder.with().nothing(), connection);
     }

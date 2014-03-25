@@ -1,6 +1,6 @@
 package executor.impl;
 
-import constant.Messages;
+import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
@@ -18,7 +18,7 @@ public class StatementExecutorImpl implements StatementExecutor {
         BasicConfigurator.configure();
         String sql = query.asSql();
         logger.info(String.format("Creating table. Query - %s", sql));
-        return executeQuery(connection, sql, Messages.CREATE_TABLE_ERROR);
+        return executeQuery(connection, sql, Constants.CREATE_TABLE_ERROR);
     }
 
     private boolean executeQuery(Connection connection, String sql,String message) {
@@ -36,6 +36,6 @@ public class StatementExecutorImpl implements StatementExecutor {
         BasicConfigurator.configure();
         String sql = query.asSql();
         logger.info(String.format("Inserting into table. Query - %s", sql));
-        return executeQuery(connection, sql,Messages.INSERT_INTO_TABLE_ERROR);
+        return executeQuery(connection, sql, Constants.INSERT_INTO_TABLE_ERROR);
     }
 }
