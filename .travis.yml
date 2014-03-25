@@ -5,3 +5,6 @@ install:
 
 script:
   - TERM=dumb gradle check
+jdk:
+  - oraclejdk8
+  - openjdk8
