@@ -10,18 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class QueryBuilder {
     private static final String ENTITY_ID = "entityId";
-    private static String defaultsForCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255)",ENTITY_ID);
+    private static String defaultsForCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),created_at timestamp default current_timestamp",ENTITY_ID);
+    private static final String DELIMITER = ",";
     private String formDefinition;
 
     public static QueryBuilder with() {
         return new QueryBuilder();
     }
 
-    private QueryBuilder() {
-    }
+    private QueryBuilder() {}
 
     public QueryBuilder formDefinition(String dataAsJson) {
         this.formDefinition = dataAsJson;
@@ -34,14 +35,13 @@ public class QueryBuilder {
         Function<String, String> converter = s -> String.format("CREATE TABLE %s (%s,%s);", formName, defaultsForCreate,s);
         Predicate<Field> filterPredicate = ((Predicate<Field>) f -> f.isNotReservedKeyword()).and(f -> f.isNotSection());
         String statement = converter.apply(definition.getForm().getFields().stream()
-                                                                           .filter(filterPredicate)
-                                                                           .map(f -> String.format("%s VARCHAR(255)", f.getName()))
-                                                                           .reduce((x, y) -> x + "," + y).get());
+                .filter(filterPredicate)
+                .map(f -> String.format("%s VARCHAR(255)", f.getName())).collect(Collectors.joining(DELIMITER)));
         return new Query(statement);
     }
 
     public Query nothing() {
-        return new Query(" ");
+        return new Query("");
     }
 
     public Query createEntity() {
@@ -60,8 +60,8 @@ public class QueryBuilder {
               });
 
         String statement = String.format("INSERT INTO %s (%s) VALUES (%s);", formName,
-                                                                             columns.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get(),
-                                                                             values.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get());
+                                                                             columns.stream().collect(Collectors.joining(DELIMITER)),
+                                                                             values.stream().collect(Collectors.joining(DELIMITER)));
         return new Query(statement);
     }
 }

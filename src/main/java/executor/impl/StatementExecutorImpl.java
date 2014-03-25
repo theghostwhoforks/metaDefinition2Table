@@ -4,7 +4,6 @@ import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
-import org.apache.log4j.BasicConfigurator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +14,6 @@ public class StatementExecutorImpl implements StatementExecutor {
 
     @Override
     public boolean createTable(Query query, Connection connection) {
-        BasicConfigurator.configure();
         String sql = query.asSql();
         logger.info(String.format("Creating table. Query - %s", sql));
         return executeQuery(connection, sql, Constants.CREATE_TABLE_ERROR);
@@ -27,13 +25,13 @@ public class StatementExecutorImpl implements StatementExecutor {
             return statement.execute();
         } catch (SQLException e) {
             logger.error(message);
+            logger.error(e.getMessage());
             throw new MetaDataServiceRuntimeException(message,e);
         }
     }
 
     @Override
     public boolean insertIntoTable(Query query, Connection connection) {
-        BasicConfigurator.configure();
         String sql = query.asSql();
         logger.info(String.format("Inserting into table. Query - %s", sql));
         return executeQuery(connection, sql, Constants.INSERT_INTO_TABLE_ERROR);
