@@ -30,8 +30,8 @@ public class QueryBuilder {
     public Query createTable() {
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
-        Function<String, String> converter = str -> String.format("CREATE TABLE %s (%s,%s);", formName, defaultsForCreate,str);
-        String statement = converter.apply(definition.getForm().getFields().stream().map(f -> String.format("%s VARCHAR(255)", f.getName())).
+        Function<String, String> converter = s -> String.format("CREATE TABLE %s (%s,%s);", formName, defaultsForCreate,s);
+        String statement = converter.apply(definition.getForm().getFields().stream().filter(Field::isNotReservedKeyword).map(f -> String.format("%s VARCHAR(255)", f.getName())).
                 reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
     }
@@ -46,19 +46,18 @@ public class QueryBuilder {
 
         List<Field> fields = definition.getForm().getFields();
 
-        List<String> columnNames = new ArrayList<>();
+        List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
         fields.stream().filter(f -> f.hasValue()).map(f -> String.format("%s.id",formName).equals(f.getName()) ?
                                                             new EntityField(ENTITY_ID,f.getValue()) : f)
               .forEach(f -> {
-                  columnNames.add(f.getName());
+                  columns.add(f.getName());
                   values.add(String.format("'%s'", f.getValue()));
               });
 
-        String stringColumns = columnNames.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();
-        String stringValues = values.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get();
-
-        String statement = String.format("INSERT INTO %s (%s) VALUES (%s);", formName, stringColumns, stringValues);
+        String statement = String.format("INSERT INTO %s (%s) VALUES (%s);", formName,
+                                                                             columns.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get(),
+                                                                             values.stream().reduce((x, y) -> String.format("%s,%s", x, y)).get());
         return new Query(statement);
     }
 }
