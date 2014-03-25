@@ -9,6 +9,7 @@ import model.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class QueryBuilder {
     private static final String ENTITY_ID = "entityId";
@@ -31,8 +32,11 @@ public class QueryBuilder {
         FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
         final String formName = definition.getName();
         Function<String, String> converter = s -> String.format("CREATE TABLE %s (%s,%s);", formName, defaultsForCreate,s);
-        String statement = converter.apply(definition.getForm().getFields().stream().filter(Field::isNotReservedKeyword).map(f -> String.format("%s VARCHAR(255)", f.getName())).
-                reduce((x, y) -> x + "," + y).get());
+        Predicate<Field> filterPredicate = ((Predicate<Field>) f -> f.isNotReservedKeyword()).and(f -> f.isNotSection());
+        String statement = converter.apply(definition.getForm().getFields().stream()
+                                                                           .filter(filterPredicate)
+                                                                           .map(f -> String.format("%s VARCHAR(255)", f.getName()))
+                                                                           .reduce((x, y) -> x + "," + y).get());
         return new Query(statement);
     }
 

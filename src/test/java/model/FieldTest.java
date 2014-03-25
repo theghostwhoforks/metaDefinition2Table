@@ -41,6 +41,18 @@ public class FieldTest {
         assertEquals(true,field.isNotReservedKeyword());
     }
 
+    @Test
+    public void shouldIgnoreFieldHavingSectionInIt() throws Exception {
+        Field field = new FieldStub("section1","42");
+        assertEquals(false,field.isNotSection());
+    }
+
+
+    @Test
+    public void shouldAllowFieldNotHavingSectionInIt() throws Exception {
+        Field field = new FieldStub("surveyId","42");
+        assertEquals(true,field.isNotSection());
+    }
 }
 
 class FieldStub extends Field {

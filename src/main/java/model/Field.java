@@ -21,7 +21,11 @@ public class Field {
     }
 
 
-    public boolean isNotReservedKeyword(){
+    public Boolean isNotReservedKeyword(){
         return !Constants.RESERVED_KEYWORDS.contains(name.toLowerCase());
+    }
+
+    public Boolean isNotSection(){
+        return !name.toLowerCase().startsWith(Constants.SECTION);
     }
 }
