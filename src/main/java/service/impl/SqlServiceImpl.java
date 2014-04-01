@@ -1,6 +1,7 @@
 package service.impl;
 
-import builder.QueryBuilder;
+import builder.EntityQueryBuilder;
+import builder.TableQueryBuilder;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
@@ -26,7 +27,7 @@ public class SqlServiceImpl implements SqlService {
         logger.info("Creating Table. Data supplied - {}",data);
 
         try {
-            List<Query> queries = QueryBuilder.with().formDefinition(data).createNestedTables();
+            List<Query> queries = TableQueryBuilder.with().formDefinition(data).create();
             for (Query query : queries) executor.createTable(query, connection);
         }catch (MetaDataServiceRuntimeException ex){
             logger.error("Error creating table(s) for form with data - {}",data);
@@ -38,7 +39,7 @@ public class SqlServiceImpl implements SqlService {
     @Override
     public boolean createEntity(Connection connection, String data) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
-        Query query = QueryBuilder.with().formDefinition(data).createEntity();
+        Query query = EntityQueryBuilder.with().formDefinition(data).create();
         logger.info("Inserting into Table. Query - {}", query.asSql());
         return executor.insertIntoTable(query, connection);
     }

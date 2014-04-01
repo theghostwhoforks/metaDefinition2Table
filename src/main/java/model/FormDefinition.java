@@ -6,12 +6,7 @@ public class FormDefinition {
     public Form getForm() {
         return form;
     }
-
     public String getName() {
-        return form.getName();
-    }
-
-    public boolean hasSubFormsInForm() {
-        return getForm().hasSubForms();
+        return form.getTableName();
     }
 }

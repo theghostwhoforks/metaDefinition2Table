@@ -1,6 +1,6 @@
 package executor.impl;
 
-import builder.QueryBuilder;
+import builder.EntityQueryBuilder;
 import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import org.junit.Before;
@@ -32,7 +32,7 @@ public class StatementExecutorImplTest {
     public void shouldCreateTable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        executor.createTable(QueryBuilder.with().nothing(), connection);
+        executor.createTable(EntityQueryBuilder.with().nothing(), connection);
         verify(statement).execute();
     }
 
@@ -41,14 +41,14 @@ public class StatementExecutorImplTest {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.CREATE_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
-        executor.createTable(QueryBuilder.with().nothing(), connection);
+        executor.createTable(EntityQueryBuilder.with().nothing(), connection);
     }
 
     @Test
     public void shouldInsertIntoTable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        executor.insertIntoTable(QueryBuilder.with().nothing(), connection);
+        executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
         verify(statement).execute();
     }
 
@@ -57,6 +57,6 @@ public class StatementExecutorImplTest {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.INSERT_INTO_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
-        executor.insertIntoTable(QueryBuilder.with().nothing(), connection);
+        executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
     }
 }
