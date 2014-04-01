@@ -16,7 +16,8 @@
                 "fields": [
                     {
                         "name": "medicationName",
-                        "bind": "/model/instance/doctor_visit/medications/medicationName"
+                        "bind": "/model/instance/doctor_visit/medications/medicationName",
+                        "value": "sample"
                     },
                     {
                         "name": "dose",
@@ -31,7 +32,8 @@
                 "fields": [
                     {
                         "name": "testRequired",
-                        "bind": "/model/instance/doctor_visit/tests/testRequired"
+                        "bind": "/model/instance/doctor_visit/tests/testRequired",
+                        "value": "sample2"
                     },
                     {
                         "name": "testRequiredName",

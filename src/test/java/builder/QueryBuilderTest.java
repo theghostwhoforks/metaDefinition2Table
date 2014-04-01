@@ -42,4 +42,17 @@ public class QueryBuilderTest {
         assertEquals(list.get(1), queries.get(1));
         assertEquals(list.get(2), queries.get(2));
     }
+
+    @Test
+    public void shouldBuildAInsertQueryWithSubForms() throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
+        List<Query> queries = EntityQueryBuilder.with().formDefinition(data).create(1);
+
+        ArrayList<Query> list = new ArrayList<>();
+        list.add(new Query("INSERT INTO doctor_visit (medicationName,parent_form_id) VALUES ('sample',1);"));
+        list.add(new Query("INSERT INTO doctor_visit (testRequired,parent_form_id) VALUES ('sample2',1);"));
+
+        assertEquals(list.get(0), queries.get(0));
+        assertEquals(list.get(1), queries.get(1));
+    }
 }

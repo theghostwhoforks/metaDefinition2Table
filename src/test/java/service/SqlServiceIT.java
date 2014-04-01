@@ -58,8 +58,8 @@ public class SqlServiceIT {
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
 
-        int first = service.createEntity(connection, data);
-        int second = service.createEntity(connection, data);
+        service.createEntity(connection, data);
+        service.createEntity(connection, data);
 
         ResultSet resultSet = statement.executeQuery("select * from OOGA");
         int count = 0;
@@ -67,7 +67,5 @@ public class SqlServiceIT {
             count++;
         }
         assertEquals(2, count);
-
-        assertTrue(second > first);
     }
 }

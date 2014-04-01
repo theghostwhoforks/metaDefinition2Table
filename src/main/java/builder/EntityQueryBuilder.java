@@ -37,16 +37,40 @@ public class EntityQueryBuilder {
 
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
+        getColumnsAndValues(formName, fields, columns, values);
+
+        String statement = getInsertStatement(formName, columns, values);
+        return new Query(statement);
+    }
+
+    private String getInsertStatement(String formName, List<String> columns, List<String> values) {
+        return String.format("INSERT INTO %s (%s) VALUES (%s);", formName,
+                    columns.stream().collect(Collectors.joining(DELIMITER)),
+                    values.stream().collect(Collectors.joining(DELIMITER)));
+    }
+
+    private void getColumnsAndValues(String formName, List<Field> fields, List<String> columns, List<String> values) {
         fields.stream().filter(f -> f.hasValue()).map(f -> String.format("%s.id",formName).equals(f.getName()) ?
                 new EntityField(ENTITY_ID,f.getValue()) : f)
                 .forEach(f -> {
                     columns.add(f.getName());
                     values.add(String.format("'%s'", f.getValue()));
                 });
+    }
 
-        String statement = String.format("INSERT INTO %s (%s) VALUES (%s);", formName,
-                columns.stream().collect(Collectors.joining(DELIMITER)),
-                values.stream().collect(Collectors.joining(DELIMITER)));
-        return new Query(statement);
+    public List<Query> create(int foreignKey) {
+        final String formName = definition.getName();
+        List<Query> queries = new ArrayList<>();
+
+        definition.getForm().getSubForms().stream().forEach(f -> {
+            List<String> columns = new ArrayList<>();
+            List<String> values = new ArrayList<>();
+            List<Field> fields = f.getFields();
+            getColumnsAndValues(formName, fields, columns, values);
+            values.add(foreignKey + "");
+            columns.add("parent_form_id");
+            queries.add(new Query(getInsertStatement(formName, columns, values)));
+        });
+        return queries;
     }
 }
