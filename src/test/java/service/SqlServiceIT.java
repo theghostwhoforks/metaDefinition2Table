@@ -24,7 +24,7 @@ public class SqlServiceIT {
 
     @After
     public void tearDown() throws Exception {
-        statement.execute("DROP TABLE OOGA");
+        statement.execute("DROP ALL OBJECTS");
         statement.close();
         connection.close();
     }
@@ -41,8 +41,6 @@ public class SqlServiceIT {
 
     @Test
     public void shouldCreateNestedTables() throws SQLException, ClassNotFoundException {
-        statement.execute("DROP TABLE medications_OOGA");
-
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
