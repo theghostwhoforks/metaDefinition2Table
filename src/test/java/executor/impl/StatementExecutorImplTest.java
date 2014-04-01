@@ -10,6 +10,7 @@ import org.junit.rules.ExpectedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
@@ -47,7 +48,11 @@ public class StatementExecutorImplTest {
     @Test
     public void shouldInsertIntoTable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
+        ResultSet resultSet = mock(ResultSet.class);
+
         when(connection.prepareStatement(anyString())).thenReturn(statement);
+        when(statement.getGeneratedKeys()).thenReturn(resultSet);
+
         executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
         verify(statement).execute();
     }

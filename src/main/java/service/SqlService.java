@@ -8,7 +8,7 @@ public interface SqlService {
         return false;
     }
 
-    boolean createEntity(Connection connection,String data);
+    int createEntity(Connection connection,String data);
     default boolean updateEntity(Connection connection,String data){
         return false;
     }

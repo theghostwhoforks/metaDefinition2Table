@@ -37,7 +37,7 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public boolean createEntity(Connection connection, String data) {
+    public int createEntity(Connection connection, String data) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
         Query query = EntityQueryBuilder.with().formDefinition(data).create();
         logger.info("Inserting into Table. Query - {}", query.asSql());

@@ -9,6 +9,7 @@ import service.impl.SqlServiceImpl;
 import java.sql.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SqlServiceIT {
 
@@ -34,8 +35,8 @@ public class SqlServiceIT {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
-
         int count = statement.executeUpdate("INSERT INTO OOGA (BOOGA) VALUES ('sample')");
+
         assertEquals(1, count);
     }
 
@@ -57,8 +58,8 @@ public class SqlServiceIT {
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
 
-        service.createEntity(connection, data);
-        service.createEntity(connection,data);
+        int first = service.createEntity(connection, data);
+        int second = service.createEntity(connection, data);
 
         ResultSet resultSet = statement.executeQuery("select * from OOGA");
         int count = 0;
@@ -66,5 +67,7 @@ public class SqlServiceIT {
             count++;
         }
         assertEquals(2, count);
+
+        assertTrue(second > first);
     }
 }

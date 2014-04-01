@@ -7,5 +7,5 @@ import java.sql.ResultSet;
 
 public interface StatementExecutor {
     public boolean createTable(Query query, Connection connection);
-    public boolean insertIntoTable(Query query, Connection connection);
+    public int insertIntoTable(Query query, Connection connection);
 }

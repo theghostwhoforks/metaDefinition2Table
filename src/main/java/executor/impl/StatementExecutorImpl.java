@@ -5,9 +5,7 @@ import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.Query;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class StatementExecutorImpl implements StatementExecutor {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StatementExecutor.class);
@@ -30,10 +28,27 @@ public class StatementExecutorImpl implements StatementExecutor {
         }
     }
 
+    private int executeQueryReturningInsertedId(Connection connection, String sql, String message) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.execute();
+            ResultSet keys = statement.getGeneratedKeys();
+            int id = -1;
+            if(keys.next()){
+                id = keys.getInt(1);
+            }
+            return id;
+        } catch (SQLException e) {
+            logger.error(message);
+            logger.error(e.getMessage());
+            throw new MetaDataServiceRuntimeException(message,e);
+        }
+    }
+
     @Override
-    public boolean insertIntoTable(Query query, Connection connection) {
+    public int insertIntoTable(Query query, Connection connection) {
         String sql = query.asSql();
         logger.info(String.format("Inserting into table. Query - %s", sql));
-        return executeQuery(connection, sql, Constants.INSERT_INTO_TABLE_ERROR);
+        return executeQueryReturningInsertedId(connection, sql, Constants.INSERT_INTO_TABLE_ERROR);
     }
 }
