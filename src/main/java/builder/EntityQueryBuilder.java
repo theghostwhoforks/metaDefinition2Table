@@ -69,7 +69,7 @@ public class EntityQueryBuilder {
             getColumnsAndValues(formName, fields, columns, values);
             values.add(foreignKey + "");
             columns.add("parent_form_id");
-            queries.add(new Query(getInsertStatement(formName, columns, values)));
+            queries.add(new Query(getInsertStatement(f.getName() + "_" + formName, columns, values)));
         });
         return queries;
     }

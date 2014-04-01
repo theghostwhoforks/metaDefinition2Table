@@ -68,4 +68,30 @@ public class SqlServiceIT {
         }
         assertEquals(2, count);
     }
+
+    @Test
+    public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, data);
+        service.createEntity(connection,data);
+
+        ResultSet resultSet = statement.executeQuery("select * from OOGA");
+
+        int count = 0;
+        while (resultSet.next()){
+            count++;
+        }
+        assertEquals(1,count);
+
+
+        ResultSet resultSet1 = statement.executeQuery("select * from medications_ooga");
+
+        int count1 = 0;
+        while (resultSet1.next()){
+            count1++;
+        }
+        assertEquals(1,count1);
+    }
 }
