@@ -40,6 +40,20 @@ public class SqlServiceIT {
     }
 
     @Test
+    public void shouldCreateNestedTables() throws SQLException, ClassNotFoundException {
+        statement.execute("DROP TABLE medications_OOGA");
+
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, data);
+
+        int count = statement.executeUpdate("INSERT INTO OOGA (BOOGA) VALUES ('sample')");
+        int nestedTableCount = statement.executeUpdate("INSERT INTO medications_OOGA (BOOGA) VALUES ('sample')");
+        assertEquals(1, count);
+        assertEquals(1, nestedTableCount);
+    }
+
+    @Test
     public void shouldInsertIntoATable() throws SQLException, ClassNotFoundException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"sample\"}]}}";
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());

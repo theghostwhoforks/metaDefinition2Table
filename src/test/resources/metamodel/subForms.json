@@ -1,0 +1,44 @@
+{
+    "form": {
+        "bind_type": "doctor_visit",
+        "default_bind_path": "/model/instance/doctor_visit",
+        "fields": [
+            {
+                "name": "instanceID",
+                "bind": "/model/instance/doctor_visit/meta/instanceID"
+            }
+        ],
+        "sub_forms": [
+            {
+                "name": "medications",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/medications",
+                "fields": [
+                    {
+                        "name": "medicationName",
+                        "bind": "/model/instance/doctor_visit/medications/medicationName"
+                    },
+                    {
+                        "name": "dose",
+                        "bind": "/model/instance/doctor_visit/medications/dose"
+                    }
+                ]
+            },
+            {
+                "name": "tests",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/tests",
+                "fields": [
+                    {
+                        "name": "testRequired",
+                        "bind": "/model/instance/doctor_visit/tests/testRequired"
+                    },
+                    {
+                        "name": "testRequiredName",
+                        "bind": "/model/instance/doctor_visit/tests/testRequiredName"
+                    }
+                ]
+            }
+        ]
+    }
+}

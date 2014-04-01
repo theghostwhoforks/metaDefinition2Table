@@ -11,4 +11,7 @@ public class FormDefinition {
         return form.getName();
     }
 
+    public boolean hasSubFormsInForm() {
+        return getForm().hasSubForms();
+    }
 }

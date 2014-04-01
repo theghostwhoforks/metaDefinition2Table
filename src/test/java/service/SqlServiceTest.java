@@ -9,8 +9,11 @@ import service.impl.SqlServiceImpl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class SqlServiceTest {
 
@@ -28,7 +31,9 @@ public class SqlServiceTest {
     @Test
     public void shouldCreateATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
-        service.createTable(connection,data);
+        boolean isCreated = service.createTable(connection, data);
+
+        assertEquals(true,isCreated);
         verify(executor).createTable(new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));"), connection);
     }
 
@@ -36,6 +41,20 @@ public class SqlServiceTest {
     public void shouldInsertIntoATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
         service.createEntity(connection, data);
+
         verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');"), connection);
+    }
+
+    @Test
+    public void shouldCreateATableWithSubForms() throws SQLException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"doctor_visit\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+        boolean isCreated = service.createTable(connection, data);
+
+        Query query = new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
+        Query query1 = new Query("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_form_id Integer references doctor_visit (ID));");
+
+        assertEquals(true,isCreated);
+        verify(executor).createTable(query, connection);
+        verify(executor).createTable(query1, connection);
     }
 }
