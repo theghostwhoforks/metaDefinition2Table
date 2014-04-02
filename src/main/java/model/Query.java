@@ -23,4 +23,7 @@ public class Query {
     public int hashCode() {
         return statement.hashCode();
     }
+
+    @Override
+    public String toString() {return statement;}
 }

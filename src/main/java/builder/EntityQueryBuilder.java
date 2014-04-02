@@ -1,17 +1,17 @@
 package builder;
 
 import com.google.gson.Gson;
-import model.*;
+import model.EntityField;
+import model.Field;
+import model.FormDefinition;
+import model.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class EntityQueryBuilder {
     private static final String ENTITY_ID = "entityId";
-    private static String defaultsForCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),created_at timestamp default current_timestamp",ENTITY_ID);
     private static final String DELIMITER = ",";
     private FormDefinition definition;
 
@@ -60,17 +60,15 @@ public class EntityQueryBuilder {
 
     public List<Query> create(int foreignKey) {
         final String formName = definition.getName();
-        List<Query> queries = new ArrayList<>();
 
-        definition.getForm().getSubForms().stream().forEach(f -> {
+        return definition.getForm().getSubForms().stream().map(f -> {
             List<String> columns = new ArrayList<>();
             List<String> values = new ArrayList<>();
             List<Field> fields = f.getFields();
             getColumnsAndValues(formName, fields, columns, values);
             values.add(foreignKey + "");
             columns.add("parent_form_id");
-            queries.add(new Query(getInsertStatement(f.getName() + "_" + formName, columns, values)));
-        });
-        return queries;
+            return new Query(getInsertStatement(f.getName() + "_" + formName, columns, values));
+        }).collect(Collectors.toList());
     }
 }

@@ -2,10 +2,12 @@ package service;
 
 import executor.StatementExecutor;
 import model.Query;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import service.impl.SqlServiceImpl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -46,8 +48,8 @@ public class SqlServiceTest {
     }
 
     @Test
-    public void shouldCreateATableWithSubForms() throws SQLException {
-        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+    public void shouldCreateATableWithSubForms() throws SQLException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
         boolean isCreated = service.createTable(connection, data);
 
         Query query = new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
@@ -56,5 +58,18 @@ public class SqlServiceTest {
         assertEquals(true,isCreated);
         verify(executor).createTable(query, connection);
         verify(executor).createTable(query1, connection);
+    }
+
+    @Test
+    public void shouldInsertIntoNestedTables() throws SQLException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+        service.createTable(connection, data);
+        Query query = new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');");
+        when(executor.insertIntoTable(query,connection)).thenReturn(1);
+        service.createEntity(connection,data);
+        Query query1 = new Query("INSERT INTO medications_OOGA (BOOGA,parent_form_id) VALUES ('TEST',1);");
+
+        verify(executor).insertIntoTable(query, connection);
+        verify(executor).insertIntoTable(query1, connection);
     }
 }

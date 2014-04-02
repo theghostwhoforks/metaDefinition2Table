@@ -1,11 +1,13 @@
 package service;
 
 import executor.impl.StatementExecutorImpl;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import service.impl.SqlServiceImpl;
 
+import java.io.IOException;
 import java.sql.*;
 
 import static org.junit.Assert.assertEquals;
@@ -41,8 +43,9 @@ public class SqlServiceIT {
     }
 
     @Test
-    public void shouldCreateNestedTables() throws SQLException, ClassNotFoundException {
-        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+    public void shouldCreateNestedTables() throws SQLException, ClassNotFoundException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
 
@@ -70,8 +73,8 @@ public class SqlServiceIT {
     }
 
     @Test
-    public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException {
-        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}],\"sub_forms\" : [{\"name\": \"medications\",\"bind_type\": \"OOGA\",\"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"}]}]}}";
+    public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
@@ -83,7 +86,7 @@ public class SqlServiceIT {
         while (resultSet.next()){
             count++;
         }
-        assertEquals(1,count);
+        assertEquals(1, count);
 
 
         ResultSet resultSet1 = statement.executeQuery("select * from medications_ooga");
