@@ -23,10 +23,10 @@ public class StatementExecutorImpl implements StatementExecutor {
 
     private boolean executeQuery(Connection connection, String sqlStatement, String message) {
         PreparedStatement statement = null;
-        try{
+        try {
             statement = executeStatement(connection, sqlStatement, message);
-        }finally {
-            try{
+        } finally {
+            try {
                 DbUtils.close(statement);
             } catch (SQLException e) {
                 throwException("Failed to close statement", e);
@@ -38,19 +38,17 @@ public class StatementExecutorImpl implements StatementExecutor {
     private int executeQueryReturningInsertedId(Connection connection, String sqlStatement, String message) {
         PreparedStatement statement = executeStatement(connection, sqlStatement, message);
         try {
-            ResultSet keys = statement.getGeneratedKeys();
-            int id = -1;
-            if (keys.next()) id = keys.getInt(1);
-            return id;
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            } else {
+                logger.error("Could not find generated key for - {}", sqlStatement);
+                throw new MetaDataServiceRuntimeException("Could not find generated key");
+            }
         } catch (SQLException e) {
             return throwException(message, e);
-        }finally {
-            try
-            {
-                DbUtils.close(statement);
-            }catch (SQLException sqlException){
-                throwException("Failed to close statement",sqlException);
-            }
+        } finally {
+            DbUtils.closeQuietly(statement);
         }
     }
 

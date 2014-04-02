@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.sql.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SqlServiceIT {
 
@@ -95,6 +94,6 @@ public class SqlServiceIT {
         while (resultSet1.next()){
             count1++;
         }
-        assertEquals(1,count1);
+        assertEquals(1, count1);
     }
 }
