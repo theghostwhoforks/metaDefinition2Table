@@ -46,12 +46,12 @@ public class SqlServiceImpl implements SqlService {
     public boolean createEntity(Connection connection, String data) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
         EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data);
-        SimpleQuery query = entityQueryBuilder.create();
+        SimpleQuery query = entityQueryBuilder.createEntity();
         logger.info("Inserting into Table. Query - {}", query.asSql());
         int foreignKey = executor.insertIntoTable(query, connection);
 
         try {
-            List<Query> queries = entityQueryBuilder.create(foreignKey);
+            List<Query> queries = entityQueryBuilder.createSubEntities(foreignKey);
             for (Query insertQuery : queries) executor.insertIntoTable(insertQuery, connection);
         }
         catch (MetaDataServiceRuntimeException ex) {

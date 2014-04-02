@@ -26,7 +26,7 @@ public class QueryBuilderTest {
     @Test
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        Query query = EntityQueryBuilder.with().formDefinition(data).create();
+        Query query = EntityQueryBuilder.with().formDefinition(data).createEntity();
         Query expected = new SimpleQuery("INSERT INTO delivery_details_and_pnc1 (formhub,uuid,today,entityId) VALUES ('sample1','sample2','sample3','42');");
         assertEquals(expected, query);
     }
@@ -51,7 +51,7 @@ public class QueryBuilderTest {
     @Test
     public void shouldBuildAInsertQueryWithSubForms() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        List<Query> queries = EntityQueryBuilder.with().formDefinition(data).create(1);
+        List<Query> queries = EntityQueryBuilder.with().formDefinition(data).createSubEntities(1);
 
         List<Query> list = new ArrayList<>();
         list.add(new SimpleQuery("INSERT INTO medications_doctor_visit (medicationName,parent_form_id) VALUES ('sample',1);"));

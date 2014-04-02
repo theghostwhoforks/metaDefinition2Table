@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import model.EntityField;
 import model.Field;
 import model.FormDefinition;
-import model.*;
 import model.query.Query;
 import model.query.SimpleQuery;
 
@@ -32,7 +31,7 @@ public class EntityQueryBuilder {
         return new SimpleQuery("");
     }
 
-    public SimpleQuery create() {
+    public SimpleQuery createEntity() {
         final String formName = definition.getName();
 
         List<Field> fields = definition.getForm().getFields();
@@ -60,7 +59,7 @@ public class EntityQueryBuilder {
                 });
     }
 
-    public List<Query> create(int foreignKey) {
+    public List<Query> createSubEntities(int foreignKey) {
         final String formName = definition.getName();
 
         return definition.getForm().getSubForms().stream().map(f -> {

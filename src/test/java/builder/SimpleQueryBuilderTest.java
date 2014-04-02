@@ -24,7 +24,7 @@ public class SimpleQueryBuilderTest {
     @Test
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        SimpleQuery query = EntityQueryBuilder.with().formDefinition(data).create();
+        SimpleQuery query = EntityQueryBuilder.with().formDefinition(data).createEntity();
         SimpleQuery expected = new SimpleQuery("INSERT INTO delivery_details_and_pnc1 (formhub,uuid,today,entityId) VALUES ('sample1','sample2','sample3','42');");
         assertEquals(expected, query);
     }
