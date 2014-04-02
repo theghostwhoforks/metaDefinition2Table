@@ -52,6 +52,7 @@ public class StatementExecutorImplTest {
 
         when(connection.prepareStatement(anyString())).thenReturn(statement);
         when(statement.getGeneratedKeys()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
 
         executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
         verify(statement).execute();
