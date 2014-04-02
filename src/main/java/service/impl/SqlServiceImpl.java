@@ -6,7 +6,6 @@ import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
 import model.query.Query;
-import model.query.SimpleQuery;
 import model.query.TableCreateQuery;
 import service.SqlService;
 
@@ -46,7 +45,7 @@ public class SqlServiceImpl implements SqlService {
     public boolean createEntity(Connection connection, String data) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
         EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data);
-        SimpleQuery query = entityQueryBuilder.createEntity();
+        Query query = entityQueryBuilder.createEntity();
         logger.info("Inserting into Table. Query - {}", query.asSql());
         int foreignKey = executor.insertIntoTable(query, connection);
 

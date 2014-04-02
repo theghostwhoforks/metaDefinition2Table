@@ -31,7 +31,7 @@ public class EntityQueryBuilder {
         return new SimpleQuery("");
     }
 
-    public SimpleQuery createEntity() {
+    public Query createEntity() {
         final String formName = definition.getName();
 
         List<Field> fields = definition.getForm().getFields();

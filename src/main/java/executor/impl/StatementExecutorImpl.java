@@ -4,7 +4,7 @@ import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.query.Query;
-import model.query.SimpleQuery;
+import org.apache.commons.dbutils.DbUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +22,16 @@ public class StatementExecutorImpl implements StatementExecutor {
     }
 
     private boolean executeQuery(Connection connection, String sqlStatement, String message) {
-        executeStatement(connection, sqlStatement, message);
+        PreparedStatement statement = null;
+        try{
+            statement = executeStatement(connection, sqlStatement, message);
+        }finally {
+            try{
+                DbUtils.close(statement);
+            } catch (SQLException e) {
+                throwException("Failed to close statement", e);
+            }
+        }
         return true;
     }
 
@@ -35,6 +44,13 @@ public class StatementExecutorImpl implements StatementExecutor {
             return id;
         } catch (SQLException e) {
             return throwException(message, e);
+        }finally {
+            try
+            {
+                DbUtils.close(statement);
+            }catch (SQLException sqlException){
+                throwException("Failed to close statement",sqlException);
+            }
         }
     }
 
