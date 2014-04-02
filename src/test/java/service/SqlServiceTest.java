@@ -1,7 +1,8 @@
 package service;
 
 import executor.StatementExecutor;
-import model.Query;
+import model.query.Query;
+import model.query.SimpleQuery;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +13,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 
 public class SqlServiceTest {
@@ -36,7 +34,7 @@ public class SqlServiceTest {
         boolean isCreated = service.createTable(connection, data);
 
         assertEquals(true,isCreated);
-        verify(executor).createTable(new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));"), connection);
+        verify(executor).createTable(new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));"), connection);
     }
 
     @Test
@@ -44,7 +42,7 @@ public class SqlServiceTest {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
         service.createEntity(connection, data);
 
-        verify(executor).insertIntoTable(new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');"), connection);
+        verify(executor).insertIntoTable(new SimpleQuery("INSERT INTO OOGA (BOOGA) VALUES ('TEST');"), connection);
     }
 
     @Test
@@ -52,8 +50,8 @@ public class SqlServiceTest {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
         boolean isCreated = service.createTable(connection, data);
 
-        Query query = new Query("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
-        Query query1 = new Query("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_form_id Integer references OOGA (ID));");
+        SimpleQuery query = new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
+        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_form_id Integer references OOGA (ID));");
 
         assertEquals(true,isCreated);
         verify(executor).createTable(query, connection);
@@ -64,10 +62,10 @@ public class SqlServiceTest {
     public void shouldInsertIntoNestedTables() throws SQLException, IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
         service.createTable(connection, data);
-        Query query = new Query("INSERT INTO OOGA (BOOGA) VALUES ('TEST');");
+        Query query = new SimpleQuery("INSERT INTO OOGA (BOOGA) VALUES ('TEST');");
         when(executor.insertIntoTable(query,connection)).thenReturn(1);
-        service.createEntity(connection,data);
-        Query query1 = new Query("INSERT INTO medications_OOGA (BOOGA,parent_form_id) VALUES ('TEST',1);");
+        service.createEntity(connection, data);
+        Query query1 = new SimpleQuery("INSERT INTO medications_OOGA (BOOGA,parent_form_id) VALUES ('TEST',1);");
 
         verify(executor).insertIntoTable(query, connection);
         verify(executor).insertIntoTable(query1, connection);

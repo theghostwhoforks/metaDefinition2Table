@@ -1,10 +1,10 @@
-package model;
+package model.query;
 
-public class Query {
+public class SimpleQuery implements Query {
 
     private final String statement;
 
-    public Query(String statement) {
+    public SimpleQuery(String statement) {
         this.statement = statement;
     }
 
@@ -15,8 +15,8 @@ public class Query {
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        if (!(other instanceof Query)) return false;
-        return statement.equals(((Query) other).statement);
+        if (!(other instanceof SimpleQuery)) return false;
+        return statement.equals(((SimpleQuery) other).statement);
     }
 
     @Override

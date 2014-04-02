@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import model.EntityField;
 import model.Field;
 import model.FormDefinition;
-import model.Query;
+import model.*;
+import model.query.Query;
+import model.query.SimpleQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,11 @@ public class EntityQueryBuilder {
         return this;
     }
 
-    public Query nothing() {
-        return new Query("");
+    public SimpleQuery nothing() {
+        return new SimpleQuery("");
     }
 
-    public Query create() {
+    public SimpleQuery create() {
         final String formName = definition.getName();
 
         List<Field> fields = definition.getForm().getFields();
@@ -40,7 +42,7 @@ public class EntityQueryBuilder {
         getColumnsAndValues(formName, fields, columns, values);
 
         String statement = getInsertStatement(formName, columns, values);
-        return new Query(statement);
+        return new SimpleQuery(statement);
     }
 
     private String getInsertStatement(String formName, List<String> columns, List<String> values) {
@@ -68,7 +70,7 @@ public class EntityQueryBuilder {
             getColumnsAndValues(formName, fields, columns, values);
             values.add(foreignKey + "");
             columns.add("parent_form_id");
-            return new Query(getInsertStatement(f.getName() + "_" + formName, columns, values));
+            return new SimpleQuery(getInsertStatement(f.getName() + "_" + formName, columns, values));
         }).collect(Collectors.toList());
     }
 }

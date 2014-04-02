@@ -5,8 +5,11 @@ import builder.TableQueryBuilder;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
-import model.Query;
+import model.query.Query;
+import model.query.SimpleQuery;
+import model.query.TableCreateQuery;
 import service.SqlService;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -27,8 +30,11 @@ public class SqlServiceImpl implements SqlService {
         logger.info("Creating Table. Data supplied - {}",data);
 
         try {
-            List<Query> queries = TableQueryBuilder.with().formDefinition(data).create();
-            for (Query query : queries) executor.createTable(query, connection);
+            TableCreateQuery createTable = TableQueryBuilder.with().formDefinition(data).create();
+            executor.createTable(createTable.getTableQuery(),connection);
+            createTable.getLinkedTableQueries().forEach(query -> {
+                 executor.createTable(query,connection);
+            });
         }catch (MetaDataServiceRuntimeException ex){
             logger.error("Error creating table(s) for form with data - {}",data);
             throw ex;
@@ -40,7 +46,7 @@ public class SqlServiceImpl implements SqlService {
     public boolean createEntity(Connection connection, String data) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
         EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data);
-        Query query = entityQueryBuilder.create();
+        SimpleQuery query = entityQueryBuilder.create();
         logger.info("Inserting into Table. Query - {}", query.asSql());
         int foreignKey = executor.insertIntoTable(query, connection);
 

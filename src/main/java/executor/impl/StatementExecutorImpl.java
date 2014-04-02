@@ -3,9 +3,13 @@ package executor.impl;
 import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
-import model.Query;
+import model.query.Query;
+import model.query.SimpleQuery;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class StatementExecutorImpl implements StatementExecutor {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StatementExecutor.class);

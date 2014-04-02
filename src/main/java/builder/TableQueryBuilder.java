@@ -2,6 +2,8 @@ package builder;
 
 import com.google.gson.Gson;
 import model.*;
+import model.query.TableCreateQuery;
+import model.query.SimpleQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +29,17 @@ public class TableQueryBuilder {
         return this;
     }
 
-    public Query nothing() {
-        return new Query("");
+    public SimpleQuery nothing() {
+        return new SimpleQuery("");
     }
 
-    public List<Query> create() {
-        List<Query> queries = new ArrayList<>();
+    public TableCreateQuery create() {
+        List<SimpleQuery> linkedTableQueries = new ArrayList<>();
         Form form = definition.getForm();
         String formName = definition.getName();
-        queries.add(new Query(createQueryFor(form, formName)));
-        queries.addAll(queriesForSubForms(form));
-        return queries;
+        SimpleQuery createTableSimpleQuery = createQueryFor(form, formName);
+        linkedTableQueries.addAll(queriesForSubForms(form));
+        return new TableCreateQuery(createTableSimpleQuery,linkedTableQueries);
     }
 
     private String collectQuery(Form form) {
@@ -46,9 +48,9 @@ public class TableQueryBuilder {
                 .map(f -> String.format("%s VARCHAR(255)", f.getName())).collect(Collectors.joining(DELIMITER));
     }
 
-    private String createQueryFor(Form form, String tableName) {
+    private SimpleQuery createQueryFor(Form form, String tableName) {
         Function<String, String> converter = query -> String.format("CREATE TABLE %s (%s,%s);", tableName, defaultsForCreate,query);
-        return converter.apply(collectQuery(form));
+        return new SimpleQuery(converter.apply(collectQuery(form)));
     }
 
     private String createQueryFor(Form form, String tableName, String foreignKey) {
@@ -56,11 +58,11 @@ public class TableQueryBuilder {
         return converter.apply(collectQuery(form));
     }
 
-    private List<Query> queriesForSubForms(final Form form) {
+    private List<SimpleQuery> queriesForSubForms(final Form form) {
         return form.getSubForms().stream().map((subForm) -> {
             String tableName = subForm.getName() + "_" + form.getTableName();
             String foreignKey = foreignKeyConstraint.apply(form.getTableName());
-            return new Query(createQueryFor(subForm, tableName, foreignKey));
+            return new SimpleQuery(createQueryFor(subForm, tableName, foreignKey));
         }).collect(Collectors.toList());
     }
 }
