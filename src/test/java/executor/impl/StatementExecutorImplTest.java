@@ -65,4 +65,38 @@ public class StatementExecutorImplTest {
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
         executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
     }
+
+    @Test
+    public void shouldThrowAnExceptionWhenDescribeStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage(Constants.DESCRIBE_TABLE_ERROR);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.getDescribedData(EntityQueryBuilder.with().nothing(), connection);
+    }
+
+
+    @Test
+    public void shouldGiveMetaDataOfATable() throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.getDescribedData(EntityQueryBuilder.with().nothing(), connection);
+        verify(statement).getMetaData();
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenUpdateStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage(Constants.UPDATE_TABLE_ERROR);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.updateTable(connection, EntityQueryBuilder.with().nothing());
+    }
+
+
+    @Test
+    public void shouldUpdateATable() throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.updateTable(connection, EntityQueryBuilder.with().nothing());
+        verify(statement).execute();
+    }
 }

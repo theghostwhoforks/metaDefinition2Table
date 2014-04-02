@@ -10,6 +10,7 @@ import service.impl.SqlServiceImpl;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
@@ -69,5 +70,23 @@ public class SqlServiceTest {
 
         verify(executor).insertIntoTable(query, connection);
         verify(executor).insertIntoTable(query1, connection);
+    }
+
+    @Test
+    public void shouldDescribeATable() throws SQLException, IOException {
+        ResultSetMetaData mock = mock(ResultSetMetaData.class);
+
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleDataWithOneFieldExtra.txt")));
+        service.createTable(connection, data);
+        Query query = new SimpleQuery("SELECT * FROM OOGA");
+        when(executor.getDescribedData(query, connection)).thenReturn(mock);
+        when(mock.getColumnCount()).thenReturn(1);
+        when(mock.getColumnName(1)).thenReturn("BOOGA");
+
+        service.updateTable(connection, data);
+
+        verify(mock).getColumnCount();
+        verify(mock).getColumnName(1);
+        verify(executor).insertIntoTable(new SimpleQuery("INSERT INTO OOGA (BOOGA,SOOGA) VALUES ('TEST','TEST1');"), connection);
     }
 }

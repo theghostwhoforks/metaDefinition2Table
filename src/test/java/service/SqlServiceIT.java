@@ -96,4 +96,18 @@ public class SqlServiceIT {
         }
         assertEquals(1, count1);
     }
+
+    @Test
+    public void shouldUpdateTable() throws SQLException, IOException {
+        String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, data);
+        String updatedData = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"},{\"name\" : \"SOOGA\"},{\"name\" : \"ENTITYID\"}]}}";
+
+        service.updateTable(connection, updatedData);
+        ResultSetMetaData metaData = connection.prepareStatement("select * from OOGA").getMetaData();
+        assertEquals(5,metaData.getColumnCount());
+        assertEquals("BOOGA",metaData.getColumnName(4));
+        assertEquals("SOOGA",metaData.getColumnName(5));
+    }
 }

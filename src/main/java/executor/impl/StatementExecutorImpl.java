@@ -6,10 +6,7 @@ import executor.StatementExecutor;
 import model.query.Query;
 import org.apache.commons.dbutils.DbUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class StatementExecutorImpl implements StatementExecutor {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StatementExecutor.class);
@@ -74,5 +71,23 @@ public class StatementExecutorImpl implements StatementExecutor {
         String sqlStatement = query.asSql();
         logger.info(String.format("Inserting into table. Query - %s", sqlStatement));
         return executeQueryReturningInsertedId(connection, sqlStatement, Constants.INSERT_INTO_TABLE_ERROR);
+    }
+
+    public ResultSetMetaData getDescribedData(Query query, Connection connection) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query.asSql());
+            return statement.getMetaData();
+        } catch (SQLException e) {
+            throwException(Constants.DESCRIBE_TABLE_ERROR,e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean updateTable(Connection connection, Query updateQuery) {
+        executeStatement(connection,updateQuery.asSql(),Constants.UPDATE_TABLE_ERROR);
+        return true;
     }
 }

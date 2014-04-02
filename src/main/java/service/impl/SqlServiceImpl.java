@@ -1,7 +1,9 @@
 package service.impl;
 
+import builder.SelectQueryBuilder;
 import builder.EntityQueryBuilder;
 import builder.TableQueryBuilder;
+import builder.UpdateQueryBuilder;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
@@ -10,6 +12,9 @@ import model.query.TableCreateQuery;
 import service.SqlService;
 
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SqlServiceImpl implements SqlService {
@@ -58,5 +63,31 @@ public class SqlServiceImpl implements SqlService {
             throw ex;
         }
         return true;
+    }
+
+    @Override
+    public boolean updateTable(Connection connection, String data) {
+        Query query = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
+        ResultSetMetaData describedData = executor.getDescribedData(query, connection);
+        List<String> columns = new ArrayList<>();
+        int columnCount = 0;
+        try {
+            columnCount = describedData.getColumnCount();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        for (int i = 1; i <= columnCount; i++) {
+            try {
+                columns.add(describedData.getColumnName(i));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        UpdateQueryBuilder updateQueryBuilder = UpdateQueryBuilder.with().formDefinition(data);
+        if (updateQueryBuilder.isRequired(columnCount)){
+            Query updateQuery = updateQueryBuilder.update(columns);
+            executor.updateTable(connection,updateQuery);
+        }
+        return createEntity(connection,data);
     }
 }
