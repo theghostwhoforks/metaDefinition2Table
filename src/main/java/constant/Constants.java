@@ -11,4 +11,5 @@ public class Constants {
     public static final List<String> RESERVED_KEYWORDS = Arrays.asList("start","end","formhub","meta");
     public static final String SECTION = "section";
     public static final String DESCRIBE_TABLE_ERROR = "There was an error while getting details of the table";
+    public static final String DELIMITER = ",";
 }

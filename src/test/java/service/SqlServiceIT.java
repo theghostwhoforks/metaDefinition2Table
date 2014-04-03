@@ -73,7 +73,7 @@ public class SqlServiceIT {
 
     @Test
     public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/insertSubForm.json")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);

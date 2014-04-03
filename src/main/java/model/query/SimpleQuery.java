@@ -1,9 +1,9 @@
 package model.query;
 
 public class SimpleQuery implements Query {
+    private String statement;
 
-    private final String statement;
-
+    @Deprecated
     public SimpleQuery(String statement) {
         this.statement = statement;
     }

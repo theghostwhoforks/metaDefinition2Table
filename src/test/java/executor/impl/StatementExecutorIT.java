@@ -2,7 +2,6 @@ package executor.impl;
 
 import executor.StatementExecutor;
 import jdk.nashorn.internal.ir.annotations.Ignore;
-import model.query.Query;
 import org.junit.After;
 import org.junit.Before;
 
@@ -38,15 +37,3 @@ public class StatementExecutorIT {
     }
 }
 
-class QueryStub implements Query{
-    private final String statement;
-
-    public QueryStub(String statement) {
-        this.statement = statement;
-    }
-
-    @Override
-    public String asSql() {
-        return statement;
-    }
-}

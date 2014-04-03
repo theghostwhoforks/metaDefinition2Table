@@ -45,6 +45,7 @@ public class StatementExecutorImpl implements StatementExecutor {
                 throw new MetaDataServiceRuntimeException("Could not find generated key");
             }
         } catch (SQLException e) {
+            logger.error(String.format("Inserting into table Failed. Query - %s", sqlStatement));
             return throwException(message, e);
         } finally {
             DbUtils.closeQuietly(statement);
@@ -76,20 +77,19 @@ public class StatementExecutorImpl implements StatementExecutor {
     }
 
     public ResultSetMetaData getDescribedData(Query query, Connection connection) {
-        PreparedStatement statement = null;
+        ResultSetMetaData metaData = null;
         try {
-            statement = connection.prepareStatement(query.asSql());
-            return statement.getMetaData();
+            PreparedStatement statement = connection.prepareStatement(query.asSql());
+            metaData = statement.getMetaData();
         } catch (SQLException e) {
             throwException(Constants.DESCRIBE_TABLE_ERROR,e);
         }
-
-        return null;
+        return metaData;
     }
 
     @Override
     public boolean updateTable(Connection connection, Query updateQuery) {
-        executeStatement(connection,updateQuery.asSql(),Constants.UPDATE_TABLE_ERROR);
+        executeStatement(connection, updateQuery.asSql(), Constants.UPDATE_TABLE_ERROR);
         return true;
     }
 }

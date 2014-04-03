@@ -3,8 +3,6 @@ package model;
 import constant.Constants;
 
 public class Field {
-
-
     private String name;
     private String value;
 

@@ -42,8 +42,8 @@ public class TableQueryBuilder {
         return new TableCreateQuery(createTableSimpleQuery,linkedTableQueries);
     }
 
-    private String collectQuery(Form parentForm) {
-        return parentForm.getFields().stream()
+    private String collectQuery(Form form) {
+        return form.getFields().stream()
                 .filter(filterPredicate)
                 .map(f -> String.format("%s VARCHAR(255)", f.getName())).collect(Collectors.joining(DELIMITER));
     }
@@ -53,9 +53,9 @@ public class TableQueryBuilder {
         return new SimpleQuery(converter.apply(collectQuery(parentForm)));
     }
 
-    private String createQueryFor(Form parentForm, String tableName, String foreignKey) {
+    private String createQueryFor(Form form, String tableName, String foreignKey) {
         Function<String, String> converter = query -> String.format("CREATE TABLE %s (%s,%s,%s);", tableName, defaultsForCreate,query,foreignKey);
-        return converter.apply(collectQuery(parentForm));
+        return converter.apply(collectQuery(form));
     }
 
     private List<SimpleQuery> queriesForSubForms(final ParentForm parentForm) {

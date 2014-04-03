@@ -5,9 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class SubForm implements Form {
 
+    public static final String INSTANCE_ID_FIELD = "id";
     private String name;
 
     private List<Field> fields = new ArrayList<>();
@@ -28,7 +30,10 @@ public class SubForm implements Form {
         return fields;
     }
 
-    public List<Map<String, String>> getInstance() {
-        return instances;
+    public Stream<Field> getFieldValues() {
+        return instances.stream().flatMap(instance ->
+                (Stream<Field>) instance.keySet().stream()
+                .map(key -> new Field(key, instance.get(key))))
+                .filter(x -> !x.getName().equals(INSTANCE_ID_FIELD));
     }
 }
