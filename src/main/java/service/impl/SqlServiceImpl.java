@@ -69,18 +69,18 @@ public class SqlServiceImpl implements SqlService {
     public boolean updateTable(Connection connection, String data) {
         Query query = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
         ResultSetMetaData describedData = executor.getDescribedData(query, connection);
-        List<String> columns = new ArrayList<>();
+        List<String> columns = new ArrayList();
         int columnCount = 0;
         try {
             columnCount = describedData.getColumnCount();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MetaDataServiceRuntimeException("could not get the column count",e);
         }
         for (int i = 1; i <= columnCount; i++) {
             try {
                 columns.add(describedData.getColumnName(i));
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new MetaDataServiceRuntimeException("could not get the column name for this index : " + i,e);
             }
         }
         UpdateQueryBuilder updateQueryBuilder = UpdateQueryBuilder.with().formDefinition(data);

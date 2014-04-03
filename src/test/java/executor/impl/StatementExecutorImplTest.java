@@ -50,9 +50,10 @@ public class StatementExecutorImplTest {
         PreparedStatement statement = mock(PreparedStatement.class);
         ResultSet resultSet = mock(ResultSet.class);
 
-        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        when(connection.prepareStatement(anyString(), (String[]) anyObject())).thenReturn(statement);
         when(statement.getGeneratedKeys()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
+        when(resultSet.getInt(1)).thenReturn(1);
 
         executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
         verify(statement).execute();
@@ -62,7 +63,7 @@ public class StatementExecutorImplTest {
     public void shouldThrowAnExceptionWhenInsertStatementExecutionFails() throws SQLException {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.INSERT_INTO_TABLE_ERROR);
-        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        when(connection.prepareStatement(anyString(), (String[]) anyObject())).thenThrow(new SQLException());
         executor.insertIntoTable(EntityQueryBuilder.with().nothing(), connection);
     }
 

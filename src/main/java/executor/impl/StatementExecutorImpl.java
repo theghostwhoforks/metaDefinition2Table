@@ -33,8 +33,10 @@ public class StatementExecutorImpl implements StatementExecutor {
     }
 
     private int executeQueryReturningInsertedId(Connection connection, String sqlStatement, String message) {
-        PreparedStatement statement = executeStatement(connection, sqlStatement, message);
+        PreparedStatement statement = null;
         try {
+            statement = connection.prepareStatement(sqlStatement, new String[]{"id"});
+            statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 return resultSet.getInt(1);
