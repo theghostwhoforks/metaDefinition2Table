@@ -28,7 +28,7 @@
             },
             {
                 "name": "delivery_details_and_pnc1_id",
-                "source": "delivery_details_and_pnc1_id",
+                "source": "delivery_details_and_pnc1.id",
                 "persistenceName": "id",
                 "value": "42"
             },
