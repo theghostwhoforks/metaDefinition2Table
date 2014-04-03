@@ -68,7 +68,7 @@ public class QueryBuilderTest {
     public void shouldBuildADescribeQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
         SimpleQuery query = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
-        assertEquals(new SimpleQuery("SELECT * FROM doctor_visit"),query);
+        assertEquals(new SimpleQuery("SELECT * FROM doctor_visit LIMIT 1;"),query);
     }
 
     @Test
