@@ -25,6 +25,6 @@ public class SelectQueryBuilder {
     public SimpleQuery createDescribeQuery() {
         String name = definition.getName();
 
-        return new SimpleQuery("SELECT * FROM " + name);
+        return new SimpleQuery("SELECT * FROM " + name + " LIMIT 1");
     };
 }
