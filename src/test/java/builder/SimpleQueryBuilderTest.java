@@ -37,8 +37,8 @@ public class SimpleQueryBuilderTest {
 
         SimpleQuery createParentTable = new SimpleQuery("CREATE TABLE doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,instanceID VARCHAR(255));");
         ArrayList<SimpleQuery> expected = new ArrayList<>();
-        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_form_id Integer references doctor_visit (ID));"));
-        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_form_id Integer references doctor_visit (ID));"));
+        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
+        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
 
         assertEquals(createParentTable, tableCreateQuery.getTableQuery());
         List<SimpleQuery> actual = tableCreateQuery.getLinkedTableQueries().collect(Collectors.toList());

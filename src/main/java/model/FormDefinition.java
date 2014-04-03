@@ -1,12 +1,15 @@
 package model;
 
-public class FormDefinition {
-    private Form form;
+import com.google.gson.annotations.SerializedName;
 
-    public Form getForm() {
+public class FormDefinition {
+    @SerializedName(value = "form")
+    private ParentForm form;
+
+    public ParentForm getForm() {
         return form;
     }
     public String getName() {
-        return form.getTableName();
+        return form.getName();
     }
 }

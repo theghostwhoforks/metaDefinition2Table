@@ -43,7 +43,7 @@ public class SqlServiceIT {
 
     @Test
     public void shouldCreateNestedTables() throws SQLException, ClassNotFoundException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.json")));
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
@@ -73,13 +73,13 @@ public class SqlServiceIT {
 
     @Test
     public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/insertSubForm.json")));
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
         service.createEntity(connection,data);
 
-        ResultSet resultSet = statement.executeQuery("select * from OOGA");
+        ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
 
         int count = 0;
         while (resultSet.next()){
@@ -88,7 +88,7 @@ public class SqlServiceIT {
         assertEquals(1, count);
 
 
-        ResultSet resultSet1 = statement.executeQuery("select * from medications_ooga");
+        ResultSet resultSet1 = statement.executeQuery("select * from medications_doctor_visit");
 
         int count1 = 0;
         while (resultSet1.next()){

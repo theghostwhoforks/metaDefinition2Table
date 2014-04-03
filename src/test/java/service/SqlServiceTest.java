@@ -48,11 +48,11 @@ public class SqlServiceTest {
 
     @Test
     public void shouldCreateATableWithSubForms() throws SQLException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.json")));
         boolean isCreated = service.createTable(connection, data);
 
         SimpleQuery query = new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
-        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_form_id Integer references OOGA (ID));");
+        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_id Integer references OOGA (ID));");
 
         assertEquals(true,isCreated);
         verify(executor).createTable(query, connection);
@@ -61,12 +61,12 @@ public class SqlServiceTest {
 
     @Test
     public void shouldInsertIntoNestedTables() throws SQLException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.txt")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/insertSubForm.json")));
         service.createTable(connection, data);
-        Query query = new SimpleQuery("INSERT INTO OOGA (BOOGA) VALUES ('TEST');");
+        Query query = new SimpleQuery("INSERT INTO doctor_visit (entityId) VALUES ('B801');");
         when(executor.insertIntoTable(query,connection)).thenReturn(1);
         service.createEntity(connection, data);
-        Query query1 = new SimpleQuery("INSERT INTO medications_OOGA (BOOGA,parent_form_id) VALUES ('TEST',1);");
+        Query query1 = new SimpleQuery("INSERT INTO medications_doctor_visit (medicationName,parent_id) VALUES ('sample',1);");
 
         verify(executor).insertIntoTable(query, connection);
         verify(executor).insertIntoTable(query1, connection);
@@ -76,7 +76,7 @@ public class SqlServiceTest {
     public void shouldDescribeATable() throws SQLException, IOException {
         ResultSetMetaData mock = mock(ResultSetMetaData.class);
 
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleDataWithOneFieldExtra.txt")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleDataWithOneFieldExtra.json")));
         service.createTable(connection, data);
         Query query = new SimpleQuery("SELECT * FROM OOGA");
         when(executor.getDescribedData(query, connection)).thenReturn(mock);

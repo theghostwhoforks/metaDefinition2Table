@@ -1,0 +1,57 @@
+{
+    "form": {
+        "bind_type": "doctor_visit",
+        "default_bind_path": "/model/instance/doctor_visit",
+        "fields": [
+            {
+                "name": "formhub",
+                "bind": "/model/instance/doctor_visit/formhub",
+                "source": "doctor_visit.formhub"
+            },
+            {
+                "name": "doctor_visit_id",
+                "source": "doctor_visit_id",
+                "persistenceName": "id",
+                "value": "B801"
+            }
+        ],
+        "sub_forms": [
+            {
+                "name": "medications",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/medications",
+                "fields": [
+                    {
+                        "name": "medicationName",
+                        "bind": "/model/instance/doctor_visit/medications/medicationName",
+                        "source": "doctor_visit.medicationName"
+                    }
+                ],
+                "instances": [
+                    {
+                        "medicationName": "sample",
+                        "id": "B801"
+                    }
+                ]
+            },
+            {
+                "name": "tests",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/tests",
+                "fields": [
+                    {
+                        "name": "testRequired",
+                        "bind": "/model/instance/doctor_visit/tests/testRequired",
+                        "source": "doctor_visit.testRequired"
+                    }
+                ],
+                "instances": [
+                    {
+                        "testRequired": "yes",
+                        "id": "B801"
+                    }
+                ]
+            }
+        ]
+    }
+}

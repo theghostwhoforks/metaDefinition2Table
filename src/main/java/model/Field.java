@@ -8,7 +8,7 @@ public class Field {
     private String name;
     private String value;
 
-    protected Field(String name, String value) {
+    public Field(String name, String value) {
         this.name = name;
         this.value = value;
     }

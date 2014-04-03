@@ -17,7 +17,7 @@ public class TableQueryBuilder {
     private FormDefinition definition;
     private static final Predicate<Field> filterPredicate =
             ((Predicate<Field>) f -> f.isNotReservedKeyword()).and(f -> f.isNotSection());
-    Function<String,String> foreignKeyConstraint = tableName -> String.format("parent_form_id Integer references %s (ID)",tableName);
+    Function<String,String> foreignKeyConstraint = tableName -> String.format("parent_id Integer references %s (ID)",tableName);
     private static String defaultsForCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),created_at timestamp default current_timestamp",ENTITY_ID);
 
     public static TableQueryBuilder with() {
@@ -35,33 +35,33 @@ public class TableQueryBuilder {
 
     public TableCreateQuery create() {
         List<SimpleQuery> linkedTableQueries = new ArrayList<>();
-        Form form = definition.getForm();
+        ParentForm parentForm = definition.getForm();
         String formName = definition.getName();
-        SimpleQuery createTableSimpleQuery = createQueryFor(form, formName);
-        linkedTableQueries.addAll(queriesForSubForms(form));
+        SimpleQuery createTableSimpleQuery = createQueryFor(parentForm, formName);
+        linkedTableQueries.addAll(queriesForSubForms(parentForm));
         return new TableCreateQuery(createTableSimpleQuery,linkedTableQueries);
     }
 
-    private String collectQuery(Form form) {
-        return form.getFields().stream()
+    private String collectQuery(Form parentForm) {
+        return parentForm.getFields().stream()
                 .filter(filterPredicate)
                 .map(f -> String.format("%s VARCHAR(255)", f.getName())).collect(Collectors.joining(DELIMITER));
     }
 
-    private SimpleQuery createQueryFor(Form form, String tableName) {
+    private SimpleQuery createQueryFor(ParentForm parentForm, String tableName) {
         Function<String, String> converter = query -> String.format("CREATE TABLE %s (%s,%s);", tableName, defaultsForCreate,query);
-        return new SimpleQuery(converter.apply(collectQuery(form)));
+        return new SimpleQuery(converter.apply(collectQuery(parentForm)));
     }
 
-    private String createQueryFor(Form form, String tableName, String foreignKey) {
+    private String createQueryFor(Form parentForm, String tableName, String foreignKey) {
         Function<String, String> converter = query -> String.format("CREATE TABLE %s (%s,%s,%s);", tableName, defaultsForCreate,query,foreignKey);
-        return converter.apply(collectQuery(form));
+        return converter.apply(collectQuery(parentForm));
     }
 
-    private List<SimpleQuery> queriesForSubForms(final Form form) {
-        return form.getSubForms().stream().map((subForm) -> {
-            String tableName = subForm.getName() + "_" + form.getTableName();
-            String foreignKey = foreignKeyConstraint.apply(form.getTableName());
+    private List<SimpleQuery> queriesForSubForms(final ParentForm parentForm) {
+        return parentForm.getSubForms().stream().map((subForm) -> {
+            String tableName = subForm.getName() + "_" + parentForm.getName();
+            String foreignKey = foreignKeyConstraint.apply(parentForm.getName());
             return new SimpleQuery(createQueryFor(subForm, tableName, foreignKey));
         }).collect(Collectors.toList());
     }

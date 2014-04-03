@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 public class QueryBuilderTest {
     @Test
@@ -39,8 +38,8 @@ public class QueryBuilderTest {
 
         List<Query> expected = new ArrayList<>();
         expected.add(new SimpleQuery("CREATE TABLE doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,instanceID VARCHAR(255));"));
-        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_form_id Integer references doctor_visit (ID));"));
-        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_form_id Integer references doctor_visit (ID));"));
+        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
+        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,entityId VARCHAR(255),created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
 
         List<SimpleQuery> actual = query.getLinkedTableQueries().collect(Collectors.toList());
 
@@ -51,12 +50,12 @@ public class QueryBuilderTest {
 
     @Test
     public void shouldBuildAInsertQueryWithSubForms() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/insertSubForm.json")));
         List<Query> queries = EntityQueryBuilder.with().formDefinition(data).createSubEntities(1);
 
         List<Query> list = new ArrayList<>();
-        list.add(new SimpleQuery("INSERT INTO medications_doctor_visit (medicationName,parent_form_id) VALUES ('sample',1);"));
-        list.add(new SimpleQuery("INSERT INTO tests_doctor_visit (testRequired,parent_form_id) VALUES ('sample2',1);"));
+        list.add(new SimpleQuery("INSERT INTO medications_doctor_visit (medicationName,parent_id) VALUES ('sample',1);"));
+        list.add(new SimpleQuery("INSERT INTO tests_doctor_visit (testRequired,parent_id) VALUES ('yes',1);"));
 
         assertEquals(list.get(0), queries.get(0));
         assertEquals(list.get(1), queries.get(1));

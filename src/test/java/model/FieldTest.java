@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 public class FieldTest {
 
     @Test
-    public void shouldName() throws IOException {
+    public void shouldGetFields() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
         FormDefinition definition = new Gson().fromJson(data, FormDefinition.class);
         assertNotNull(definition);
