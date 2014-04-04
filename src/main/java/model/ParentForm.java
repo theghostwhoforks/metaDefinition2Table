@@ -13,12 +13,15 @@ public class ParentForm implements Form {
 
     @SerializedName(value = "sub_forms")
     private List<SubForm> subForms = new ArrayList<>();
+
     @Override
     public List<SubForm> getSubForms() {return subForms;}
+
     @Override
     public List<Field> getFields() {
         return fields;
     }
+
     @Override
     public String getName() { return name; }
 

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EntityQueryBuilder {
-    private static final String ENTITY_ID = "entityId";
+    private static final String ENTITY_ID = "entity_id";
     public static final String REFERENCED_FIELD_ID = "parent_id";
     private FormDefinition definition;
 
@@ -35,24 +35,23 @@ public class EntityQueryBuilder {
     public Query createEntity() {
         final String formName = definition.getName();
         Stream<Field> fields = definition.getForm().getFields().stream().filter(Field::hasValue)
-                                       .map(f -> String.format("%s_id", formName).equals(f.getName()) ?
-                                               new EntityField(ENTITY_ID, f.getValue()) : f);
-        return new InsertQuery(formName,fields);
+                .map(f -> String.format("%s_id", formName).equals(f.getName()) ?
+                        new EntityField(ENTITY_ID, f.getValue()) : f);
+        return new InsertQuery(formName, fields);
     }
 
     public List<Query> createSubEntities(Integer foreignKey) {
         final String formName = definition.getName();
-        final Field foreignKeyField = new Field(REFERENCED_FIELD_ID,foreignKey.toString());
-        return definition.getForm().getSubForms().stream().map(subForm -> {
-                    return new InsertQuery(subFormTableName(formName, subForm.getName()), Stream.concat(
-                            subForm.getFieldValues().filter(Field::hasValue),
-                            Stream.of(foreignKeyField)));
-                }
+        final Field foreignKeyField = new Field(REFERENCED_FIELD_ID, foreignKey.toString());
+        return definition.getForm().getSubForms().stream().map(subForm ->
+                new InsertQuery(subFormTableName(formName, subForm.getName()), Stream.concat(
+                subForm.getFieldValues().filter(Field::hasValue),
+                Stream.of(foreignKeyField)))
         ).collect(Collectors.toList());
     }
 
     private String subFormTableName(String formName, String subFormName) {
-        return String.format("%s_%s", subFormName,formName);
+        return String.format("%s_%s", subFormName, formName);
     }
 
 }

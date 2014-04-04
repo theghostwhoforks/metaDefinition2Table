@@ -4,9 +4,9 @@
         "default_bind_path": "/model/instance/doctor_visit",
         "fields": [
             {
-                "name": "formhub",
-                "bind": "/model/instance/doctor_visit/formhub",
-                "source": "doctor_visit.formhub"
+                "name": "doctor_name",
+                "bind": "/model/instance/doctor_visit/doctor_name",
+                "source": "doctor_visit.doctor_name"
             },
             {
                 "name": "doctor_visit_id",
