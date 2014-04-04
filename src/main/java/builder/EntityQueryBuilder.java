@@ -43,15 +43,15 @@ public class EntityQueryBuilder {
     public List<Query> createSubEntities(Integer foreignKey) {
         final String formName = definition.getName();
         final Field foreignKeyField = new Field(REFERENCED_FIELD_ID, foreignKey.toString());
-        return definition.getForm().getSubForms().stream().map(subForm ->
-                new InsertQuery(subFormTableName(formName, subForm.getName()), Stream.concat(
-                subForm.getFieldValues().filter(Field::hasValue),
-                Stream.of(foreignKeyField)))
-        ).collect(Collectors.toList());
+        return definition.getForm().getSubForms().stream()
+                .<InsertQuery>flatMap(subForm ->
+                subForm.getFieldValues().map(instance ->
+                    new InsertQuery(subFormTableName(formName,subForm.getName()),
+                                    Stream.concat(instance, Stream.of(foreignKeyField)))
+                )).collect(Collectors.toList());
     }
 
     private String subFormTableName(String formName, String subFormName) {
         return String.format("%s_%s", subFormName, formName);
     }
-
 }

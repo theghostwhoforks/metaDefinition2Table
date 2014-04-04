@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -19,10 +20,10 @@ public class SubFormTest {
         List<SubForm> subForms = definition.getForm().getSubForms();
         assertEquals(2,subForms.size());
 
-        List<Field> firstSubFormFields = subForms.get(0).getFieldValues().collect(Collectors.toList());
-        assertEquals(1, firstSubFormFields.size());
+        List<Stream<Field>> collect = subForms.get(0).getFieldValues().collect(Collectors.toList());
+        assertEquals(2, collect.size());
 
-        List<Field> secondSubFormFields = subForms.get(1).getFieldValues().collect(Collectors.toList());
-        assertEquals(1, secondSubFormFields.size());
+        List<Stream<Field>> secondSubFormFields = subForms.get(1).getFieldValues().collect(Collectors.toList());
+        assertEquals(2, secondSubFormFields.size());
     }
 }

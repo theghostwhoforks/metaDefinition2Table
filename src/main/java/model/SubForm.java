@@ -30,10 +30,12 @@ public class SubForm implements Form {
         return fields;
     }
 
-    public Stream<Field> getFieldValues() {
-        return instances.stream().flatMap(instance ->
-                (Stream<Field>) instance.keySet().stream()
-                .map(key -> new Field(key, instance.get(key))))
-                .filter(x -> !x.getName().equals(INSTANCE_ID_FIELD));
+    public Stream<Stream<Field>> getFieldValues() {
+        return instances.stream().map(instance ->
+                        instance.keySet().stream()
+                                .map(key -> new Field(key, instance.get(key)))
+                                .filter(x -> !x.getName().equals(INSTANCE_ID_FIELD))
+        );
+
     }
 }
