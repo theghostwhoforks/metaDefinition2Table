@@ -55,7 +55,7 @@ public class SqlServiceTest {
         boolean isCreated = service.createTable(connection, data);
 
         SimpleQuery query = new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entity_id VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
-        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_id Integer references OOGA (ID));");
+        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_id Integer references OOGA (ID) ON DELETE CASCADE);");
 
         assertEquals(true,isCreated);
         verify(executor).createTable(query, connection);

@@ -39,8 +39,8 @@ public class SimpleQueryBuilderTest {
         assertEquals(expectedTableCreateQuery, tableCreateQuery.getTableQuery().asSql());
 
         ArrayList<SimpleQuery> expected = new ArrayList<>();
-        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
-        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_id Integer references doctor_visit (ID));"));
+        expected.add(new SimpleQuery("CREATE TABLE medications_doctor_visit (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,medicationName VARCHAR(255),dose VARCHAR(255),parent_id Integer references doctor_visit (ID) ON DELETE CASCADE);"));
+        expected.add(new SimpleQuery("CREATE TABLE tests_doctor_visit (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,testRequired VARCHAR(255),testRequiredName VARCHAR(255),parent_id Integer references doctor_visit (ID) ON DELETE CASCADE);"));
 
 
         List<SimpleQuery> actual = tableCreateQuery.getLinkedTableQueries().collect(Collectors.toList());

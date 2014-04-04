@@ -23,7 +23,7 @@ public class TableQueryBuilder {
 
     private static final Predicate<Field> filterPredicate =
             ((Predicate<Field>) f -> f.isNotReservedKeyword()).and(f -> f.isNotSection());
-    Function<String,String> foreignKeyConstraint = tableName -> String.format("parent_id Integer references %s (ID)",tableName);
+    Function<String,String> foreignKeyConstraint = tableName -> String.format("parent_id Integer references %s (ID) ON DELETE CASCADE",tableName);
     private static String defaultsForFormCreate =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),created_at timestamp default current_timestamp",ENTITY_ID);
     private static String defaultsForSubFormCreate = "ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp";
 
