@@ -1,9 +1,14 @@
 package model.query;
 
+import com.sun.deploy.util.StringUtils;
 import constant.Constants;
 import model.Field;
 
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,13 +23,16 @@ public class InsertQuery implements Query {
     }
 
     @Override
-    //TODO - Ugly ugly code
     public String asSql() {
-        Stream<Field> fieldStream = fields.stream();
-        Stream<Field> duplicateStream = fields.stream();
-        String columnNames = fieldStream.map(Field::getName).collect(Collectors.joining(Constants.DELIMITER));
-        String values = duplicateStream.map(x -> String.format("'%s'",x.getValue())).collect(Collectors.joining(Constants.DELIMITER));
-        return String.format(INSERT_TEMPLATE,tableName,columnNames,values);
+        Function<? super Field, ? extends String> quoteValue = (x) -> String.format("'%s'",x.getValue());
+
+        Collector<Field, ?, SortedMap<String, String>> collector = Collectors.toMap(Field::getName, quoteValue, (x,y) -> x + ": " + y, TreeMap<String, String>::new);
+        SortedMap<String, String> collect = fields.stream().collect(collector);
+
+        String columns = StringUtils.join(collect.keySet(), Constants.DELIMITER);
+        String values = StringUtils.join(collect.values(), Constants.DELIMITER);
+
+        return String.format(INSERT_TEMPLATE,tableName, columns, values);
     }
 
     @Override
