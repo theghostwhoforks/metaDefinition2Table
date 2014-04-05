@@ -1,8 +1,8 @@
 package model.query;
 
-import com.sun.deploy.util.StringUtils;
 import constant.Constants;
 import model.Field;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -29,9 +29,8 @@ public class InsertQuery implements Query {
         Collector<Field, ?, SortedMap<String, String>> collector = Collectors.toMap(Field::getName, quoteValue, (x,y) -> x + ": " + y, TreeMap<String, String>::new);
         SortedMap<String, String> collect = fields.stream().collect(collector);
 
-        String columns = StringUtils.join(collect.keySet(), Constants.DELIMITER);
-        String values = StringUtils.join(collect.values(), Constants.DELIMITER);
-
+        String columns = StringUtils.join(collect.keySet().toArray(), Constants.DELIMITER);
+        String values = StringUtils.join(collect.values().toArray(), Constants.DELIMITER);
         return String.format(INSERT_TEMPLATE,tableName, columns, values);
     }
 

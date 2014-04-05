@@ -2,9 +2,7 @@ package service;
 
 import executor.StatementExecutor;
 import model.Field;
-import model.query.InsertQuery;
-import model.query.Query;
-import model.query.SimpleQuery;
+import model.query.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,9 +13,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class SqlServiceTest {
@@ -36,10 +35,15 @@ public class SqlServiceTest {
     @Test
     public void shouldCreateATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\"}]}}";
-        boolean isCreated = service.createTable(connection, data);
 
-        assertEquals(true,isCreated);
-        verify(executor).createTable(new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entity_id VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));"), connection);
+        String tableName = "OOGA";
+        List<Field> list = new ArrayList<>();
+        list.add(new Field("BOOGA", null));
+
+        CreateIndependentQuery independentQuery = new CreateIndependentQuery(list, tableName);
+
+        service.createTable(connection, data);
+        verify(executor).createTable(independentQuery, connection);
     }
 
     @Test
@@ -52,14 +56,20 @@ public class SqlServiceTest {
     @Test
     public void shouldCreateATableWithSubForms() throws SQLException, IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleData.json")));
-        boolean isCreated = service.createTable(connection, data);
 
-        SimpleQuery query = new SimpleQuery("CREATE TABLE OOGA (ID SERIAL PRIMARY KEY,entity_id VARCHAR(255),created_at timestamp default current_timestamp,BOOGA VARCHAR(255));");
-        SimpleQuery query1 = new SimpleQuery("CREATE TABLE medications_OOGA (ID SERIAL PRIMARY KEY,created_at timestamp default current_timestamp,BOOGA VARCHAR(255),parent_id Integer references OOGA (ID) ON DELETE CASCADE);");
+        String tableName = "OOGA";
+        String dependentTableName = "medications";
 
-        assertEquals(true,isCreated);
-        verify(executor).createTable(query, connection);
-        verify(executor).createTable(query1, connection);
+        List<Field> list = new ArrayList<>();
+        list.add(new Field("BOOGA", null));
+
+        CreateIndependentQuery independentQuery = new CreateIndependentQuery(list, tableName);
+        CreateDependentQuery dependentQuery = new CreateDependentQuery(list, dependentTableName, tableName);
+
+        when(executor.createTable(independentQuery, connection)).thenReturn(true);
+        service.createTable(connection, data);
+
+        verify(executor).createTable(dependentQuery, connection);
     }
 
     @Test

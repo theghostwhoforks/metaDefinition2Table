@@ -1,14 +1,14 @@
 package service.impl;
 
-import builder.SelectQueryBuilder;
 import builder.EntityQueryBuilder;
+import builder.SelectQueryBuilder;
 import builder.TableQueryBuilder;
 import builder.UpdateQueryBuilder;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
+import model.query.FormTableCreateQueryMultiMap;
 import model.query.Query;
-import model.query.TableCreateQuery;
 import service.SqlService;
 
 import java.sql.Connection;
@@ -34,7 +34,7 @@ public class SqlServiceImpl implements SqlService {
         logger.info("Creating Table. Data supplied - {}",data);
 
         try {
-            TableCreateQuery createTable = TableQueryBuilder.with().formDefinition(data).create();
+            FormTableCreateQueryMultiMap createTable = TableQueryBuilder.with().formDefinition(data).create();
             executor.createTable(createTable.getTableQuery(),connection);
             createTable.getLinkedTableQueries().forEach(query -> {
                  executor.createTable(query,connection);

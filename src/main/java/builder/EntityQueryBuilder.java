@@ -1,5 +1,6 @@
 package builder;
 
+
 import com.google.gson.Gson;
 import model.EntityField;
 import model.Field;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EntityQueryBuilder {
+public class EntityQueryBuilder implements Builder {
     private static final String ENTITY_ID = "entity_id";
     public static final String REFERENCED_FIELD_ID = "parent_id";
     private FormDefinition definition;
@@ -49,9 +50,5 @@ public class EntityQueryBuilder {
                     new InsertQuery(subFormTableName(formName,subForm.getName()),
                                     Stream.concat(instance, Stream.of(foreignKeyField)))
                 )).collect(Collectors.toList());
-    }
-
-    private String subFormTableName(String formName, String subFormName) {
-        return String.format("%s_%s", subFormName, formName);
     }
 }

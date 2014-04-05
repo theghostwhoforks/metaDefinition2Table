@@ -12,4 +12,7 @@ public class Constants {
     public static final String SECTION = "section";
     public static final String DESCRIBE_TABLE_ERROR = "There was an error while getting details of the table";
     public static final String DELIMITER = ",";
+    public static final String ENTITY_ID = "entity_id";
+    public static final String REFERENCED_FIELD_ID = "parent_id";
+    public static final String ID_SUFFIX = "_id";
 }
