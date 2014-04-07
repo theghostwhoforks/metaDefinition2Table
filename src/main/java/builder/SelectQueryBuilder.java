@@ -2,9 +2,14 @@ package builder;
 
 import com.google.gson.Gson;
 import model.FormDefinition;
-import model.query.SimpleQuery;
+import model.query.Query;
+import model.query.SelectQuery;
 
-public class SelectQueryBuilder {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class SelectQueryBuilder implements Builder {
     private FormDefinition definition;
 
     public static SelectQueryBuilder with() {
@@ -18,13 +23,18 @@ public class SelectQueryBuilder {
         return this;
     }
 
-    public SimpleQuery nothing() {
-        return new SimpleQuery("");
+    public Query nothing() {
+        return () -> "";
     }
 
-    public SimpleQuery createDescribeQuery() {
+    public List<Query> createDescribeQuery() {
         String name = definition.getName();
+        List<Query> queries = new ArrayList();
+        queries.add(new SelectQuery(name));
 
-        return new SimpleQuery(String.format("SELECT * FROM %s LIMIT 1;",name));
+        queries.addAll(definition.getForm().getSubForms().stream().map(subForm ->
+                new SelectQuery(subFormTableName(name, subForm.getName()))).collect(Collectors.toList()));
+
+        return queries;
     };
 }

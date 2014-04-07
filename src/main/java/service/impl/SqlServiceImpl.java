@@ -12,10 +12,8 @@ import model.query.Query;
 import service.SqlService;
 
 import java.sql.Connection;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SqlServiceImpl implements SqlService {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlService.class);
@@ -31,16 +29,16 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public boolean createTable(Connection connection, String data) {
-        logger.info("Creating Table. Data supplied - {}",data);
+        logger.info("Creating Table. Data supplied - {}", data);
 
         try {
             FormTableCreateQueryMultiMap createTable = TableQueryBuilder.with().formDefinition(data).create();
-            executor.createTable(createTable.getTableQuery(),connection);
+            executor.createTable(createTable.getTableQuery(), connection);
             createTable.getLinkedTableQueries().forEach(query -> {
-                 executor.createTable(query,connection);
+                executor.createTable(query, connection);
             });
-        }catch (MetaDataServiceRuntimeException ex){
-            logger.error("Error creating table(s) for form with data - {}",data);
+        } catch (MetaDataServiceRuntimeException ex) {
+            logger.error("Error creating table(s) for form with data - {}", data);
             throw ex;
         }
         return true;
@@ -57,9 +55,8 @@ public class SqlServiceImpl implements SqlService {
         try {
             List<Query> queries = entityQueryBuilder.createSubEntities(foreignKey);
             for (Query insertQuery : queries) executor.insertIntoTable(insertQuery, connection);
-        }
-        catch (MetaDataServiceRuntimeException ex) {
-            logger.error("Error inserting into table(s) for form with data - {}",data);
+        } catch (MetaDataServiceRuntimeException ex) {
+            logger.error("Error inserting into table(s) for form with data - {}", data);
             throw ex;
         }
         return true;
@@ -67,27 +64,24 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public boolean updateTable(Connection connection, String data) {
-        Query query = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
-        ResultSetMetaData describeTable = executor.getDescribedData(query, connection);
-        List<String> columns = new ArrayList();
-        int columnCount = 0;
-        try {
-            columnCount = describeTable.getColumnCount();
-        } catch (SQLException e) {
-            throw new MetaDataServiceRuntimeException("could not get the column count",e);
-        }
-        for (int i = 1; i <= columnCount; i++) {
-            try {
-                columns.add(describeTable.getColumnName(i));
-            } catch (SQLException e) {
-                throw new MetaDataServiceRuntimeException("could not get the column name for this index : " + i,e);
-            }
-        }
-        UpdateQueryBuilder updateQueryBuilder = UpdateQueryBuilder.with().formDefinition(data);
-        if (updateQueryBuilder.isRequired(columnCount)){
-            Query updateQuery = updateQueryBuilder.update(columns);
-            executor.updateTable(connection,updateQuery);
-        }
-        return createEntity(connection,data);
+        List<Query> queries = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
+
+        Map<String, Set<String>> allColumns = new HashMap();
+
+        queries.stream().map(query -> executor.getDescribedData(query, connection))
+                .forEach(resultSet -> {
+                    Set<String> fields = new HashSet();
+                    try {
+                        int columnCount = resultSet.getColumnCount();
+                        for (int i = 1; i <= columnCount; i++)
+                            fields.add(resultSet.getColumnName(i));
+                        allColumns.put(resultSet.getTableName(1), fields);
+                    } catch (SQLException e2) {
+                        throw new MetaDataServiceRuntimeException("could not get the data from tables", e2);
+                    }
+                });
+        List<Query> updateQuery = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
+        updateQuery.stream().forEach(query -> executor.updateTable(connection, query));
+        return true;
     }
 }

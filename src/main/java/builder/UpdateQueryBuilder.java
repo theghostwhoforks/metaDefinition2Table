@@ -1,16 +1,18 @@
 package builder;
 
 import com.google.gson.Gson;
-import model.Field;
+import model.Form;
 import model.FormDefinition;
 import model.query.Query;
-import model.query.SimpleQuery;
+import model.query.UpdateQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class UpdateQueryBuilder {
+public class UpdateQueryBuilder implements Builder{
     private static final String ENTITY_ID = "entityId";
     private static final String DELIMITER = ",";
     private FormDefinition definition;
@@ -27,23 +29,19 @@ public class UpdateQueryBuilder {
         return this;
     }
 
-    public SimpleQuery nothing() {
-        return new SimpleQuery("");
-    }
+    public Query nothing() { return () -> "" ;}
 
-    public Query update(List<String> columns) {
-        List<Field> fieldsToBeUpdated = new ArrayList<>();
-        definition.getForm().getFields().stream().forEach(field -> {
-            if (!columns.contains(field.getName())) fieldsToBeUpdated.add(field);
-        });
-        Function<String, String> converter = str -> String.format("ALTER TABLE %s %s;", definition.getName(), str);
-        String statement = converter.apply(fieldsToBeUpdated.stream().map(f -> {
-            return String.format("%s VARCHAR(255)", String.format("ADD COLUMN %s", f.getName()));
-        }).reduce((x, y) -> x + "," + y).get());
-        return new SimpleQuery(statement);
-    }
+    public List<Query> update(Map<String, Set<String>> columns) {
+        Form form = definition.getForm();
+        String formName = form.getName();
+        List<Query> queries = new ArrayList();
+        queries.add(new UpdateQuery(formName,form.getFields(),columns.get(formName.toUpperCase())));
+        columns.remove(formName.toUpperCase());
 
-    public boolean isRequired(int columnCount) {
-        return columnCount < definition.getForm().getFields().size() + 2;
+        queries.addAll(form.getSubForms().stream().map(subForm -> {
+            String tableName = subFormTableName(formName, subForm.getName());
+            return new UpdateQuery(tableName, subForm.getFields(), columns.get(tableName.toUpperCase()));
+        }).collect(Collectors.toList()));
+        return queries;
     }
 }

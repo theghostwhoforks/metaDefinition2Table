@@ -12,11 +12,6 @@
                 "bind": "/model/instance/delivery_details_and_pnc1/sectionA/anotherPregnancyId"
             },
             {
-                "name": "womanId",
-                "bind": "/model/instance/delivery_details_and_pnc1/sectionA/womanId",
-                "value": "sample4"
-            },
-            {
                 "name": "delivery_details_and_pnc1_id",
                 "source": "delivery_details_and_pnc1_id",
                 "persistenceName": "id",

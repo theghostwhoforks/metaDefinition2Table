@@ -126,8 +126,7 @@ public class SqlServiceIT {
 
     }
 
-    @Ignore
-    //TODO - fix update. Looking at count is not fool proof
+    @Test
     public void shouldUpdateTable() throws SQLException, IOException {
         File jsonFileVersionOne = FileUtils.toFile(this.getClass().getResource("/metamodel/update/simple_form_001.json"));
         File jsonFileVersionTwo = FileUtils.toFile(this.getClass().getResource("/metamodel/update/simple_form_002.json"));
@@ -143,5 +142,30 @@ public class SqlServiceIT {
 
         int currentColumnCount = connection.prepareStatement("select * from delivery_details_and_pnc1").getMetaData().getColumnCount();
         assertEquals(originalColumnCount + 1, currentColumnCount);
+    }
+
+    @Test
+    public void shouldUpdateDependentAndIndependentTable() throws SQLException, IOException {
+        File jsonFileVersionOne = FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_001.json"));
+        File jsonFileVersionTwo = FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_002.json"));
+
+        String versionOne = FileUtils.readFileToString(jsonFileVersionOne);
+        String versionTwo = FileUtils.readFileToString(jsonFileVersionTwo);
+
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, versionOne);
+        int originalColumnCount = connection.prepareStatement("select * from doctor_visit").getMetaData().getColumnCount();
+        int dependentTable1OriginalColumnCount = connection.prepareStatement("select * from medications_doctor_visit").getMetaData().getColumnCount();
+        int dependentTable2OriginalColumnCount = connection.prepareStatement("select * from tests_doctor_visit").getMetaData().getColumnCount();
+
+        service.updateTable(connection, versionTwo);
+
+        int currentColumnCount = connection.prepareStatement("select * from doctor_visit").getMetaData().getColumnCount();
+        int dependentTable1CurrentColumnCount1 = connection.prepareStatement("select * from medications_doctor_visit").getMetaData().getColumnCount();
+        int dependentTable2CurrentColumnCount2 = connection.prepareStatement("select * from tests_doctor_visit").getMetaData().getColumnCount();
+
+        assertEquals(originalColumnCount + 1, currentColumnCount);
+        assertEquals(dependentTable1OriginalColumnCount + 1, dependentTable1CurrentColumnCount1);
+        assertEquals(dependentTable2OriginalColumnCount + 1, dependentTable2CurrentColumnCount2);
     }
 }

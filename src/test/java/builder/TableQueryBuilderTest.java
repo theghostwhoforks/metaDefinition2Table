@@ -2,7 +2,6 @@ package builder;
 
 import model.query.FormTableCreateQueryMultiMap;
 import model.query.Query;
-import model.query.SimpleQuery;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -38,12 +37,5 @@ public class TableQueryBuilderTest {
 
         assertEquals(expected.get(0), actual.get(0).asSql());
         assertEquals(expected.get(1), actual.get(1).asSql());
-    }
-
-    @Test
-    public void shouldBuildADescribeQuery() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        SimpleQuery query = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
-        assertEquals(new SimpleQuery("SELECT * FROM doctor_visit LIMIT 1;"),query);
     }
 }

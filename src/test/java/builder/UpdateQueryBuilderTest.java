@@ -1,44 +1,64 @@
 package builder;
 
 import model.query.Query;
-import model.query.SimpleQuery;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 
 public class UpdateQueryBuilderTest {
     @Test
-    public void shouldReturnTrueWhenUpdateTableIsRequired() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
-        boolean isRequired = UpdateQueryBuilder.with().formDefinition(data).isRequired(0);
-        assertEquals(true,isRequired);
-    }
-
-    @Test
-    public void shouldReturnFalseWhenUpdateTableIsNotRequired() throws IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
-        boolean isRequired = UpdateQueryBuilder.with().formDefinition(data).isRequired(10);
-        assertEquals(false,isRequired);
-    }
-
-    @Test
     public void shouldBuildAnUpdateQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
 
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add("pregnancyId");
-        columns.add("today");
-        columns.add("uuid");
-        columns.add("formhub");
+        Set<String> columns = new HashSet();
+        columns.add("PREGNANCYID");
+        columns.add("TODAY");
+        columns.add("UUID");
+        columns.add("FORMHUB");
 
-        Query query = UpdateQueryBuilder.with().formDefinition(data).update(columns);
-        Query expected = new SimpleQuery("ALTER TABLE delivery_details_and_pnc1 ADD COLUMN sectionA VARCHAR(255),ADD COLUMN womanId VARCHAR(255);");
+        Map<String,Set<String>> allColumns = new HashMap();
+        allColumns.put("DELIVERY_DETAILS_AND_PNC1",columns);
 
-        assertEquals(expected,query);
+        List<Query> query = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
+        String expected = "ALTER TABLE delivery_details_and_pnc1 ADD COLUMN womanId VARCHAR(255);";
+
+        assertEquals(expected,query.get(0).asSql());
     }
+
+    @Test
+    public void shouldBuildAListOfUpdateQueriesForLinkedTables() throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_002.json")));
+
+        Set<String> parentTableColumns = new HashSet();
+        parentTableColumns.add("DOCTOR_NAME");
+        parentTableColumns.add("ENTITY_ID");
+
+        Set<String> firstDependentTableColumns = new HashSet();
+        firstDependentTableColumns.add("MEDICATIONNAME");
+
+        Set<String> secondDependentTableColumns = new HashSet();
+        secondDependentTableColumns.add("TESTREQUIRED");
+
+        Map<String,Set<String>> columns = new HashMap();
+        columns.put("DOCTOR_VISIT", parentTableColumns);
+        columns.put("MEDICATIONS_DOCTOR_VISIT", firstDependentTableColumns);
+        columns.put("TESTS_DOCTOR_VISIT", secondDependentTableColumns);
+
+
+        List<Query> updateQueries = UpdateQueryBuilder.with().formDefinition(data).update(columns);
+        String parentTableUpdateQuery = "ALTER TABLE doctor_visit ADD COLUMN doctor_first_name VARCHAR(255);";
+        String firstDependentTableUpdateQuery = "ALTER TABLE medications_doctor_visit ADD COLUMN dose VARCHAR(255);";
+        String secondDependentTableUpdateQuery = "ALTER TABLE tests_doctor_visit ADD COLUMN testRequiredName VARCHAR(255);";
+
+        assertEquals(parentTableUpdateQuery ,updateQueries.get(0).asSql());
+        assertEquals(firstDependentTableUpdateQuery ,updateQueries.get(1).asSql());
+        assertEquals(secondDependentTableUpdateQuery , updateQueries.get(2).asSql());
+    }
+
+
 
 }

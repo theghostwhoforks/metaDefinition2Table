@@ -5,7 +5,6 @@ import model.Field;
 import model.query.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import service.impl.SqlServiceImpl;
 
@@ -14,7 +13,9 @@ import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
@@ -85,21 +86,55 @@ public class SqlServiceTest {
         verify(executor).insertIntoTable(subFormQuery, connection);
     }
 
-    @Ignore
-    public void shouldDescribeATable() throws SQLException, IOException {
-        ResultSetMetaData mock = mock(ResultSetMetaData.class);
+    @Test
+    public void shouldUpdateATable() throws SQLException, IOException {
+        ResultSetMetaData parentTableResultSetMock = mock(ResultSetMetaData.class);
+        ResultSetMetaData firstDependentTableResultSetMock = mock(ResultSetMetaData.class);
+        ResultSetMetaData secondDependentTableResultSetMock = mock(ResultSetMetaData.class);
 
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sampleDataWithOneFieldExtra.json")));
-        service.createTable(connection, data);
-        Query query = new SimpleQuery("SELECT * FROM OOGA");
-        when(executor.getDescribedData(query, connection)).thenReturn(mock);
-        when(mock.getColumnCount()).thenReturn(1);
-        when(mock.getColumnName(1)).thenReturn("BOOGA");
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_002.json")));
+        Query parentTableSelectQuery = new SelectQuery("doctor_visit");
+        Query firstDependentTableSelectQuery = new SelectQuery("medications_doctor_visit");
+        Query secondDependentTableSelectQuery = new SelectQuery("tests_doctor_visit");
+
+        when(executor.getDescribedData(parentTableSelectQuery, connection)).thenReturn(parentTableResultSetMock);
+
+        when(parentTableResultSetMock.getColumnCount()).thenReturn(1);
+        when(parentTableResultSetMock.getColumnName(1)).thenReturn("DOCTOR_NAME");
+        when(parentTableResultSetMock.getTableName(1)).thenReturn("DOCTOR_VISIT");
+
+        when(executor.getDescribedData(firstDependentTableSelectQuery, connection)).thenReturn(firstDependentTableResultSetMock);
+        when(firstDependentTableResultSetMock.getColumnCount()).thenReturn(1);
+        when(firstDependentTableResultSetMock.getTableName(1)).thenReturn("MEDICATIONS_DOCTOR_VISIT");
+        when(firstDependentTableResultSetMock.getColumnName(1)).thenReturn("MEDICATIONNAME");
+
+        when(executor.getDescribedData(secondDependentTableSelectQuery, connection)).thenReturn(secondDependentTableResultSetMock);
+        when(secondDependentTableResultSetMock.getColumnCount()).thenReturn(1);
+        when(secondDependentTableResultSetMock.getColumnName(1)).thenReturn("TESTREQUIRED");
+        when(secondDependentTableResultSetMock.getTableName(1)).thenReturn("TESTS_DOCTOR_VISIT");
+
+        Field field = new Field("doctor_first_name", "");
+        List<Field> fields = new ArrayList();
+        fields.add(field);
+        Set<String> updatedParentTableData= new HashSet();
+        updatedParentTableData.add(field.getName());
+
+        Field field1 = new Field("dose", "");
+        List<Field> fields1 = new ArrayList();
+        fields1.add(field1);
+        Set<String> firstDependentTableData= new HashSet();
+        firstDependentTableData.add(field1.getName());
+
+        Field field2 = new Field("testRequiredName", "");
+        List<Field> fields2 = new ArrayList();
+        fields2.add(field2);
+        Set<String> secondDependentTableData= new HashSet();
+        secondDependentTableData.add(field2.getName());
 
         service.updateTable(connection, data);
 
-        verify(mock).getColumnCount();
-        verify(mock).getColumnName(1);
-        verify(executor).insertIntoTable(new SimpleQuery("INSERT INTO OOGA (BOOGA,SOOGA) VALUES ('TEST','TEST1');"), connection);
+        verify(executor).updateTable(connection, new UpdateQuery("doctor_visit",fields,updatedParentTableData));
+        verify(executor).updateTable(connection, new UpdateQuery("medications_doctor_visit",fields1,firstDependentTableData));
+        verify(executor).updateTable(connection, new UpdateQuery("tests_doctor_visit",fields2,secondDependentTableData));
     }
 }
