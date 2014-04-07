@@ -2,14 +2,25 @@ package model.query;
 
 public class SelectQuery implements Query {
     private final String tableName;
+    private String columnName;
+    private int id;
 
     public SelectQuery(String tableName) {
         this.tableName = tableName;
+        this.id = -1;
+    }
+
+    public SelectQuery(String tableName,String columnName ,int id) {
+        this.tableName = tableName;
+        this.columnName = columnName;
+        this.id = id;
     }
 
     @Override
     public String asSql() {
-        return String.format("SELECT * FROM %s LIMIT 1;",tableName);
+        if(id == -1)
+            return String.format("SELECT * FROM %s LIMIT 1;",tableName);
+        return String.format("SELECT * FROM %s WHERE %s = %s;",tableName,columnName,id);
     }
 
     @Override

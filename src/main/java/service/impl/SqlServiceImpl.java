@@ -7,11 +7,16 @@ import builder.UpdateQueryBuilder;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
+import model.Field;
+import model.Form;
+import model.ParentForm;
 import model.query.FormTableCreateQueryMultiMap;
 import model.query.Query;
 import service.SqlService;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -70,11 +75,8 @@ public class SqlServiceImpl implements SqlService {
 
         queries.stream().map(query -> executor.getDescribedData(query, connection))
                 .forEach(resultSet -> {
-                    Set<String> fields = new HashSet();
                     try {
-                        int columnCount = resultSet.getColumnCount();
-                        for (int i = 1; i <= columnCount; i++)
-                            fields.add(resultSet.getColumnName(i));
+                        Set<String> fields = getColumnNames(resultSet);
                         allColumns.put(resultSet.getTableName(1), fields);
                     } catch (SQLException e2) {
                         throw new MetaDataServiceRuntimeException("could not get the data from tables", e2);
@@ -83,5 +85,53 @@ public class SqlServiceImpl implements SqlService {
         List<Query> updateQuery = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
         updateQuery.stream().forEach(query -> executor.updateTable(connection, query));
         return true;
+    }
+
+    private Set<String> getColumnNames(ResultSetMetaData resultSet) throws SQLException {
+        Set<String> fields = new HashSet();
+        int columnCount = resultSet.getColumnCount();
+        for (int i = 1; i <= columnCount; i++)
+            fields.add(resultSet.getColumnName(i));
+        return fields;
+    }
+
+    @Override
+    public Form getDataFor(Connection connection, int id, String formName, List<String> subFormNames) {
+        FormTableCreateQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subFormNames);
+        ResultSet resultSet = executor.selectDataFromTable(connection, selectQueries.getTableQuery());
+        List<Field> fields = new ArrayList();
+        try {
+            if(!resultSet.next()){
+                //TODO: Iterate better
+                return null;
+            }
+
+            Set<String> columnNames = getColumnNames(resultSet.getMetaData());
+            for (String columnName : columnNames) {
+                String value = resultSet.getString(columnName);
+                fields.add(new Field(columnName, value));
+            }
+        } catch (SQLException e) {
+            throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
+        }
+//        List<SubForm> subForms = selectQueries.getLinkedTableQueries().stream().map(query -> executor.selectDataFromTable(connection, query))
+//                .map(resultSet -> {
+//                    HashMap<String, String> instance = new HashMap<>();
+//                    String tableName = null;
+//                    try {
+//                        ResultSetMetaData metaData = resultSet.getMetaData();
+//                        Set<String> columnNames = getColumnNames(metaData);
+//                        tableName = metaData.getTableName(1);
+//                        for (String columnName : columnNames) {
+//                            instance.put(columnName, resultSet.getString(columnName));
+//                        }
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
+//                    List<Map<String, String>> instances = new ArrayList();
+//                    instances.add(instance);
+//                    return new SubForm(tableName, instances);
+//                }).collect(Collectors.toList());
+        return new ParentForm(fields,null);
     }
 }

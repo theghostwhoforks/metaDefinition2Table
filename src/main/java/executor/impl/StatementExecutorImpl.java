@@ -75,7 +75,7 @@ public class StatementExecutorImpl implements StatementExecutor {
         logger.info(String.format("Inserting into table. Query - %s", sqlStatement));
         return executeQueryReturningInsertedId(connection, sqlStatement, Constants.INSERT_INTO_TABLE_ERROR);
     }
-
+    @Override
     public ResultSetMetaData getDescribedData(Query query, Connection connection) {
         ResultSetMetaData metaData = null;
         try {
@@ -91,5 +91,18 @@ public class StatementExecutorImpl implements StatementExecutor {
     public boolean updateTable(Connection connection, Query updateQuery) {
         executeStatement(connection, updateQuery.asSql(), Constants.UPDATE_TABLE_ERROR);
         return true;
+    }
+
+    @Override
+    public ResultSet selectDataFromTable(Connection connection, Query query) {
+        ResultSet resultSet = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement(query.asSql());
+            resultSet = statement.executeQuery();
+            return resultSet;
+        } catch (SQLException e) {
+            throwException(Constants.SELECT_DATA_FROM_TABLE_ERROR,e);
+        }
+        return resultSet;
     }
 }

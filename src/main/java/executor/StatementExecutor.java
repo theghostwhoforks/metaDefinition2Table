@@ -3,6 +3,7 @@ package executor;
 import model.query.Query;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 public interface StatementExecutor {
@@ -12,4 +13,6 @@ public interface StatementExecutor {
     ResultSetMetaData getDescribedData(Query query, Connection connection);
 
     public boolean updateTable(Connection connection, Query updateQuery);
+
+    ResultSet selectDataFromTable(Connection connection, Query query);
 }

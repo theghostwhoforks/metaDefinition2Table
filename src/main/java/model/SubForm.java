@@ -17,6 +17,14 @@ public class SubForm implements Form {
     @SerializedName(value = "instances")
     private List<Map<String, String>> instances;
 
+    public SubForm() {
+    }
+
+    public SubForm(String name, List<Map<String, String>> instances) {
+        this.name = name;
+        this.instances = instances;
+    }
+
     @Override
     public String getName() {return name;}
 

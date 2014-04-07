@@ -1,6 +1,8 @@
 package executor.impl;
 
 import builder.EntityQueryBuilder;
+import builder.SelectQueryBuilder;
+import builder.UpdateQueryBuilder;
 import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import org.junit.Before;
@@ -72,7 +74,7 @@ public class StatementExecutorImplTest {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.DESCRIBE_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
-        executor.getDescribedData(EntityQueryBuilder.with().nothing(), connection);
+        executor.getDescribedData(SelectQueryBuilder.with().nothing(), connection);
     }
 
 
@@ -80,7 +82,7 @@ public class StatementExecutorImplTest {
     public void shouldGiveMetaDataOfATable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        executor.getDescribedData(EntityQueryBuilder.with().nothing(), connection);
+        executor.getDescribedData(SelectQueryBuilder.with().nothing(), connection);
         verify(statement).getMetaData();
     }
 
@@ -89,7 +91,7 @@ public class StatementExecutorImplTest {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.UPDATE_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
-        executor.updateTable(connection, EntityQueryBuilder.with().nothing());
+        executor.updateTable(connection, UpdateQueryBuilder.with().nothing());
     }
 
 
@@ -97,7 +99,24 @@ public class StatementExecutorImplTest {
     public void shouldUpdateATable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        executor.updateTable(connection, EntityQueryBuilder.with().nothing());
+        executor.updateTable(connection, UpdateQueryBuilder.with().nothing());
         verify(statement).execute();
+    }
+
+
+    @Test
+    public void shouldThrowAnExceptionWhenSelectStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage(Constants.SELECT_DATA_FROM_TABLE_ERROR);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing());
+    }
+
+    @Test
+    public void shouldGetDataFromATable() throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing());
+        verify(statement).executeQuery();
     }
 }
