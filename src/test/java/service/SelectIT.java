@@ -43,6 +43,7 @@ public class SelectIT {
 
         Form form = service.getDataFor(connection, primaryId, formName, "medications_doctor_visit","tests_doctor_visit");
 
+        assertEquals("doctor_visit",form.getName());
         assertEquals(4, form.getFields().size());
         assertEquals(2,form.getSubForms().size());
         SubForm firstSubForm = form.getSubForms().get(0);

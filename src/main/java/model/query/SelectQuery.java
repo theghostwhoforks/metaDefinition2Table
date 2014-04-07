@@ -1,29 +1,26 @@
 package model.query;
 
 public class SelectQuery implements Query {
-    private final String tableName;
-    private String columnName;
-    private int id;
+    protected final String tableName;
+    protected int id;
 
     @Deprecated
     public SelectQuery(String tableName) {
         this.tableName = tableName;
-        this.id = -1;
     }
 
-    //TODO: Set this right. Use Inheritance to define columnName to query
-    @Deprecated
-    public SelectQuery(String tableName,String columnName ,int id) {
+    public SelectQuery(String tableName,int id) {
         this.tableName = tableName;
-        this.columnName = columnName;
         this.id = id;
     }
 
     @Override
     public String asSql() {
-        if(id == -1)
-            return String.format("SELECT * FROM %s LIMIT 1;",tableName);
-        return String.format("SELECT * FROM %s WHERE %s = %s;",tableName,columnName,id);
+        return String.format("SELECT * FROM %s WHERE ID = %s;",tableName,id);
+    }
+
+    public String createDescribeQuery() {
+        return String.format("SELECT * FROM %s LIMIT 1;",tableName);
     }
     
     public String getTableName(){

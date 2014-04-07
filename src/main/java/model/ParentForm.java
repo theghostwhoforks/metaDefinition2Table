@@ -17,7 +17,8 @@ public class ParentForm implements Form {
     public ParentForm() {
     }
 
-    public ParentForm(List<Field> fields, List<SubForm> subForms) {
+    public ParentForm(String name, List<Field> fields, List<SubForm> subForms) {
+        this.name = name;
         this.fields = fields;
         this.subForms = subForms;
     }

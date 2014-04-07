@@ -93,9 +93,9 @@ public class SqlServiceTest {
         ResultSetMetaData secondDependentTableResultSetMock = mock(ResultSetMetaData.class);
 
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_002.json")));
-        Query parentTableSelectQuery = new SelectQuery("doctor_visit");
-        Query firstDependentTableSelectQuery = new SelectQuery("medications_doctor_visit");
-        Query secondDependentTableSelectQuery = new SelectQuery("tests_doctor_visit");
+        SelectQuery parentTableSelectQuery = new SelectQuery("doctor_visit");
+        SelectQuery firstDependentTableSelectQuery = new SelectQuery("medications_doctor_visit");
+        SelectQuery secondDependentTableSelectQuery = new SelectQuery("tests_doctor_visit");
 
         when(executor.getDescribedData(parentTableSelectQuery, connection)).thenReturn(parentTableResultSetMock);
 
@@ -137,58 +137,4 @@ public class SqlServiceTest {
         verify(executor).updateTable(connection, new UpdateQuery("medications_doctor_visit", fields1, firstDependentTableData));
         verify(executor).updateTable(connection, new UpdateQuery("tests_doctor_visit", fields2, secondDependentTableData));
     }
-
-//    @Ignore
-//    public void shouldGiveDataForSpecifiedId() throws Exception {
-//        String formName = "doctor_visit";
-//        String firstDependentTableName = "medications_doctor_visit";
-//        String secondDependentTableName = "tests_doctor_visit";
-//        List<String> subForms = Arrays.asList(firstDependentTableName, secondDependentTableName);
-//        int id = 1;
-//
-//        ResultSet parentTableResultSetMock = mock(ResultSet.class);
-//        ResultSet firstDependentTableResultSetMock = mock(ResultSet.class);
-//        ResultSet secondDependentTableResultSetMock = mock(ResultSet.class);
-//
-//        ResultSetMetaData parentTableMetaData = mock(ResultSetMetaData.class);
-//        ResultSetMetaData firstDependentTableMetaData = mock(ResultSetMetaData.class);
-//        ResultSetMetaData secondDependentTableMetaData = mock(ResultSetMetaData.class);
-//
-//        Query parentTableQuery = new SelectQuery(formName, "ID", 1);
-//        Query firstDependentTableQuery = new SelectQuery(firstDependentTableName, "parent_id", 1);
-//        Query secondDependentTableQuery = new SelectQuery(secondDependentTableName, "parent_id", 1);
-//
-//        when(executor.selectDataFromTable(connection,parentTableQuery)).thenReturn(parentTableResultSetMock);
-//        when(parentTableResultSetMock.getMetaData()).thenReturn(parentTableMetaData);
-//        when(parentTableResultSetMock.getString("first")).thenReturn("first");
-//        when(parentTableMetaData.getColumnCount()).thenReturn(1);
-//        when(parentTableMetaData.getColumnName(1)).thenReturn("first");
-//        when(parentTableMetaData.getTableName(1)).thenReturn(formName);
-//
-//        when(executor.selectDataFromTable(connection,firstDependentTableQuery)).thenReturn(firstDependentTableResultSetMock);
-//        when(firstDependentTableResultSetMock.getMetaData()).thenReturn(firstDependentTableMetaData);
-//        when(firstDependentTableResultSetMock.getString("second")).thenReturn("second");
-//        when(firstDependentTableMetaData.getColumnCount()).thenReturn(1);
-//        when(firstDependentTableMetaData.getColumnName(1)).thenReturn("second");
-//
-//        when(executor.selectDataFromTable(connection,secondDependentTableQuery)).thenReturn(secondDependentTableResultSetMock);
-//        when(secondDependentTableResultSetMock.getMetaData()).thenReturn(secondDependentTableMetaData);
-//        when(secondDependentTableResultSetMock.getString("third")).thenReturn("third");
-//        when(secondDependentTableMetaData.getColumnCount()).thenReturn(1);
-//        when(secondDependentTableMetaData.getColumnName(1)).thenReturn("third");
-//
-//        Form form = service.getDataFor(connection, id, formName, subForms);
-//
-//        assertNotNull(form);
-//        assertEquals(2, form.getSubForms().size());
-//        assertEquals(1, form.getFields().size());
-//        assertEquals(formName,form.getName());
-//
-//
-//        verify(executor).selectDataFromTable(connection, parentTableQuery);
-//
-//        verify(executor).selectDataFromTable(connection, firstDependentTableQuery);
-//
-//        verify(executor).selectDataFromTable(connection, secondDependentTableQuery);
-//    }
 }

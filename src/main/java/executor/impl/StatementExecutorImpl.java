@@ -4,7 +4,9 @@ import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import model.query.Query;
+import model.query.SelectQuery;
 import org.apache.commons.dbutils.DbUtils;
+import wrapper.ResultSetWrapper;
 
 import java.sql.*;
 
@@ -76,10 +78,10 @@ public class StatementExecutorImpl implements StatementExecutor {
         return executeQueryReturningInsertedId(connection, sqlStatement, Constants.INSERT_INTO_TABLE_ERROR);
     }
     @Override
-    public ResultSetMetaData getDescribedData(Query query, Connection connection) {
+    public ResultSetMetaData getDescribedData(SelectQuery query, Connection connection) {
         ResultSetMetaData metaData = null;
         try {
-            PreparedStatement statement = connection.prepareStatement(query.asSql());
+            PreparedStatement statement = connection.prepareStatement((query).createDescribeQuery());
             metaData = statement.getMetaData();
         } catch (SQLException e) {
             throwException(Constants.DESCRIBE_TABLE_ERROR,e);
@@ -94,15 +96,14 @@ public class StatementExecutorImpl implements StatementExecutor {
     }
 
     @Override
-    public ResultSet selectDataFromTable(Connection connection, Query query) {
+    public ResultSetWrapper selectDataFromTable(Connection connection, Query query) {
         ResultSet resultSet = null;
         try {
             PreparedStatement statement = connection.prepareStatement(query.asSql());
             resultSet = statement.executeQuery();
-            return resultSet;
         } catch (SQLException e) {
             throwException(Constants.SELECT_DATA_FROM_TABLE_ERROR,e);
         }
-        return resultSet;
+        return new ResultSetWrapper(resultSet);
     }
 }

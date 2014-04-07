@@ -15,9 +15,9 @@ import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectQuery;
 import service.SqlService;
+import wrapper.ResultSetWrapper;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
@@ -71,7 +71,7 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public boolean updateTable(Connection connection, String data) {
-        List<Query> queries = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
+        List<SelectQuery> queries = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
 
         Map<String, Set<String>> allColumns = new HashMap();
 
@@ -101,41 +101,16 @@ public class SqlServiceImpl implements SqlService {
     public Form getDataFor(Connection connection, int id, String formName, String... subFormNames) {
         FormTableQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
 
-        ResultSet resultSet = executor.selectDataFromTable(connection, selectQueries.getTableQuery());
-        List<Field> fields = new ArrayList();
-        try {
-            if(!resultSet.next()){
-                //TODO: Iterate better.Create Wrapper object that is returned when executor returns.
-                return null;
-            }
-            Set<String> columnNames = getColumnNames(resultSet.getMetaData());
-            for (String columnName : columnNames) {
-                String value = resultSet.getString(columnName);
-                fields.add(new Field(columnName, value));
-            }
-        } catch (SQLException e) {
-            throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
-        }
+        SelectQuery tableQuery = (SelectQuery) selectQueries.getTableQuery();
+        ResultSetWrapper resultSet = executor.selectDataFromTable(connection, tableQuery);
+        List<Field> fields = resultSet.getParentTableFields();
 
         List<SubForm> subForms = new ArrayList<>();
         for (Query query : selectQueries.getLinkedTableQueries()){
-            try {
-                List<Map<String, String>> instances = new ArrayList<>();
-                ResultSet dependentTableResultSet = executor.selectDataFromTable(connection, query);
-                String tableName = ((SelectQuery)query).getTableName();
-                ResultSetMetaData subFormMetaData = dependentTableResultSet.getMetaData();
-                while(dependentTableResultSet.next()){
-                    Map<String, String> instance = new HashMap<>();
-                    for(String columnName : getColumnNames(subFormMetaData)){
-                        instance.put(columnName,dependentTableResultSet.getString(columnName));
-                    }
-                    instances.add(instance);
-                }
-                subForms.add(new SubForm(tableName,instances));
-            }catch (SQLException ex){
-                throw new MetaDataServiceRuntimeException("Shit just happened here",ex);
-            }
+            List<Map<String, String>> instances = new ArrayList<>();
+            ResultSetWrapper dependentTableResultSet = executor.selectDataFromTable(connection, query);
+            subForms.add(new SubForm(((SelectQuery)query).getTableName(), dependentTableResultSet.getSubForm(instances)));
         }
-        return new ParentForm(fields,subForms);
+        return new ParentForm(tableQuery.getTableName(),fields,subForms);
     }
 }

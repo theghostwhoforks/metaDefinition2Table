@@ -1,10 +1,10 @@
 package builder;
 
 import com.google.gson.Gson;
-import constant.Constants;
 import model.FormDefinition;
 import model.query.FormTableQueryMultiMap;
 import model.query.Query;
+import model.query.SelectDependentQuery;
 import model.query.SelectQuery;
 
 import java.util.ArrayList;
@@ -25,13 +25,13 @@ public class SelectQueryBuilder implements Builder {
         return this;
     }
 
-    public Query nothing() {
-       return () -> "";
+    public SelectQuery nothing() {
+       return new SelectQuery("",0);
     }
 
-    public List<Query> createDescribeQuery() {
+    public List<SelectQuery> createDescribeQuery() {
         String name = definition.getName();
-        List<Query> queries = new ArrayList();
+        List<SelectQuery> queries = new ArrayList();
         queries.add(new SelectQuery(name));
         queries.addAll(definition.getForm().getSubForms().stream().map(subForm ->
                 new SelectQuery(subFormTableName(name, subForm.getName()))).collect(Collectors.toList()));
@@ -40,7 +40,7 @@ public class SelectQueryBuilder implements Builder {
 
     public FormTableQueryMultiMap createSelectQueriesFor(int id, String formName, List<String> subForms) {
         List<Query> nestedTableQueries = subForms.stream().map(tableName ->
-                new SelectQuery(tableName, Constants.REFERENCED_FIELD_ID, id)).collect(Collectors.toList());
-        return new FormTableQueryMultiMap(new SelectQuery(formName,"ID",id),nestedTableQueries);
+                new SelectDependentQuery(tableName, id)).collect(Collectors.toList());
+        return new FormTableQueryMultiMap(new SelectQuery(formName,id),nestedTableQueries);
     }
 }
