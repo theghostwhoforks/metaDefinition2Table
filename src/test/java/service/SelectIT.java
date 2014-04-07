@@ -1,6 +1,7 @@
 package service;
 
 import model.Form;
+import model.SubForm;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +10,7 @@ import service.impl.SqlServiceImpl;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,9 +38,19 @@ public class SelectIT {
     @Test
     public void shouldSelectSingleEntity() throws Exception {
         String formName = "doctor_visit";
+
         int primaryId = setUpData(formName);
-        Form form = service.getDataFor(connection, primaryId, formName, new ArrayList<>());
+
+        Form form = service.getDataFor(connection, primaryId, formName, "medications_doctor_visit","tests_doctor_visit");
+
         assertEquals(4, form.getFields().size());
+        assertEquals(2,form.getSubForms().size());
+        SubForm firstSubForm = form.getSubForms().get(0);
+        SubForm secondSubForm = form.getSubForms().get(1);
+        int firstSubFormSize = firstSubForm.getFieldValues().collect(Collectors.toList()).size();
+        assertEquals(2,firstSubFormSize);
+        int secondSubFormSize = secondSubForm.getFieldValues().collect(Collectors.toList()).size();
+        assertEquals(2,secondSubFormSize);
     }
 
     private int setUpData(String formName) throws IOException, SQLException {

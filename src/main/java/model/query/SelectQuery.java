@@ -5,11 +5,14 @@ public class SelectQuery implements Query {
     private String columnName;
     private int id;
 
+    @Deprecated
     public SelectQuery(String tableName) {
         this.tableName = tableName;
         this.id = -1;
     }
 
+    //TODO: Set this right. Use Inheritance to define columnName to query
+    @Deprecated
     public SelectQuery(String tableName,String columnName ,int id) {
         this.tableName = tableName;
         this.columnName = columnName;
@@ -21,6 +24,10 @@ public class SelectQuery implements Query {
         if(id == -1)
             return String.format("SELECT * FROM %s LIMIT 1;",tableName);
         return String.format("SELECT * FROM %s WHERE %s = %s;",tableName,columnName,id);
+    }
+    
+    public String getTableName(){
+        return tableName;
     }
 
     @Override

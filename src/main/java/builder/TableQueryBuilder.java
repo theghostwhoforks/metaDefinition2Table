@@ -28,7 +28,7 @@ public class TableQueryBuilder implements Builder {
         return () -> "";
     }
 
-    public FormTableCreateQueryMultiMap create() {
+    public FormTableQueryMultiMap create() {
         List<Query> linkedTableQueries = new ArrayList<>();
         ParentForm parentForm = definition.getForm();
         String formName = definition.getName();
@@ -36,7 +36,7 @@ public class TableQueryBuilder implements Builder {
 
         CreateIndependentQuery independentQuery = new CreateIndependentQuery(fields, formName);
         linkedTableQueries.addAll(queriesForSubForms(parentForm));
-        return new FormTableCreateQueryMultiMap(independentQuery,linkedTableQueries);
+        return new FormTableQueryMultiMap(independentQuery,linkedTableQueries);
     }
 
     private List<Query> queriesForSubForms(final Form form) {

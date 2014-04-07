@@ -2,24 +2,22 @@ package service;
 
 import executor.StatementExecutor;
 import model.Field;
-import model.Form;
 import model.query.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import service.impl.SqlServiceImpl;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class SqlServiceTest {
@@ -140,58 +138,57 @@ public class SqlServiceTest {
         verify(executor).updateTable(connection, new UpdateQuery("tests_doctor_visit", fields2, secondDependentTableData));
     }
 
-    @Ignore
-    public void shouldGiveDataForSpecifiedId() throws Exception {
-        String formName = "doctor_visit";
-        String firstDependentTableName = "medications_doctor_visit";
-        String secondDependentTableName = "tests_doctor_visit";
-        List<String> subForms = Arrays.asList(firstDependentTableName, secondDependentTableName);
-        int id = 1;
-
-        ResultSet parentTableResultSetMock = mock(ResultSet.class);
-        ResultSet firstDependentTableResultSetMock = mock(ResultSet.class);
-        ResultSet secondDependentTableResultSetMock = mock(ResultSet.class);
-
-        ResultSetMetaData parentTableMetaData = mock(ResultSetMetaData.class);
-        ResultSetMetaData firstDependentTableMetaData = mock(ResultSetMetaData.class);
-        ResultSetMetaData secondDependentTableMetaData = mock(ResultSetMetaData.class);
-
-        Query parentTableQuery = new SelectQuery(formName, "ID", 1);
-        Query firstDependentTableQuery = new SelectQuery(firstDependentTableName, "parent_id", 1);
-        Query secondDependentTableQuery = new SelectQuery(secondDependentTableName, "parent_id", 1);
-
-        when(executor.selectDataFromTable(connection,parentTableQuery)).thenReturn(parentTableResultSetMock);
-        when(parentTableResultSetMock.getMetaData()).thenReturn(parentTableMetaData);
-        when(parentTableResultSetMock.getString("first")).thenReturn("first");
-        when(parentTableMetaData.getColumnCount()).thenReturn(1);
-        when(parentTableMetaData.getColumnName(1)).thenReturn("first");
-        when(parentTableMetaData.getTableName(1)).thenReturn(formName);
-
-        when(executor.selectDataFromTable(connection,firstDependentTableQuery)).thenReturn(firstDependentTableResultSetMock);
-        when(firstDependentTableResultSetMock.getMetaData()).thenReturn(firstDependentTableMetaData);
-        when(firstDependentTableResultSetMock.getString("second")).thenReturn("second");
-        when(firstDependentTableMetaData.getColumnCount()).thenReturn(1);
-        when(firstDependentTableMetaData.getColumnName(1)).thenReturn("second");
-
-        when(executor.selectDataFromTable(connection,secondDependentTableQuery)).thenReturn(secondDependentTableResultSetMock);
-        when(secondDependentTableResultSetMock.getMetaData()).thenReturn(secondDependentTableMetaData);
-        when(secondDependentTableResultSetMock.getString("third")).thenReturn("third");
-        when(secondDependentTableMetaData.getColumnCount()).thenReturn(1);
-        when(secondDependentTableMetaData.getColumnName(1)).thenReturn("third");
-
-        Form form = service.getDataFor(connection, id, formName, subForms);
-
-        assertNotNull(form);
-        assertEquals(2, form.getSubForms().size());
-        assertEquals(1, form.getFields().size());
-        assertEquals(formName,form.getName());
-
-
-        verify(executor).selectDataFromTable(connection, parentTableQuery);
-
-        verify(executor).selectDataFromTable(connection, firstDependentTableQuery);
-
-        verify(executor).selectDataFromTable(connection, secondDependentTableQuery);
-    }
-
+//    @Ignore
+//    public void shouldGiveDataForSpecifiedId() throws Exception {
+//        String formName = "doctor_visit";
+//        String firstDependentTableName = "medications_doctor_visit";
+//        String secondDependentTableName = "tests_doctor_visit";
+//        List<String> subForms = Arrays.asList(firstDependentTableName, secondDependentTableName);
+//        int id = 1;
+//
+//        ResultSet parentTableResultSetMock = mock(ResultSet.class);
+//        ResultSet firstDependentTableResultSetMock = mock(ResultSet.class);
+//        ResultSet secondDependentTableResultSetMock = mock(ResultSet.class);
+//
+//        ResultSetMetaData parentTableMetaData = mock(ResultSetMetaData.class);
+//        ResultSetMetaData firstDependentTableMetaData = mock(ResultSetMetaData.class);
+//        ResultSetMetaData secondDependentTableMetaData = mock(ResultSetMetaData.class);
+//
+//        Query parentTableQuery = new SelectQuery(formName, "ID", 1);
+//        Query firstDependentTableQuery = new SelectQuery(firstDependentTableName, "parent_id", 1);
+//        Query secondDependentTableQuery = new SelectQuery(secondDependentTableName, "parent_id", 1);
+//
+//        when(executor.selectDataFromTable(connection,parentTableQuery)).thenReturn(parentTableResultSetMock);
+//        when(parentTableResultSetMock.getMetaData()).thenReturn(parentTableMetaData);
+//        when(parentTableResultSetMock.getString("first")).thenReturn("first");
+//        when(parentTableMetaData.getColumnCount()).thenReturn(1);
+//        when(parentTableMetaData.getColumnName(1)).thenReturn("first");
+//        when(parentTableMetaData.getTableName(1)).thenReturn(formName);
+//
+//        when(executor.selectDataFromTable(connection,firstDependentTableQuery)).thenReturn(firstDependentTableResultSetMock);
+//        when(firstDependentTableResultSetMock.getMetaData()).thenReturn(firstDependentTableMetaData);
+//        when(firstDependentTableResultSetMock.getString("second")).thenReturn("second");
+//        when(firstDependentTableMetaData.getColumnCount()).thenReturn(1);
+//        when(firstDependentTableMetaData.getColumnName(1)).thenReturn("second");
+//
+//        when(executor.selectDataFromTable(connection,secondDependentTableQuery)).thenReturn(secondDependentTableResultSetMock);
+//        when(secondDependentTableResultSetMock.getMetaData()).thenReturn(secondDependentTableMetaData);
+//        when(secondDependentTableResultSetMock.getString("third")).thenReturn("third");
+//        when(secondDependentTableMetaData.getColumnCount()).thenReturn(1);
+//        when(secondDependentTableMetaData.getColumnName(1)).thenReturn("third");
+//
+//        Form form = service.getDataFor(connection, id, formName, subForms);
+//
+//        assertNotNull(form);
+//        assertEquals(2, form.getSubForms().size());
+//        assertEquals(1, form.getFields().size());
+//        assertEquals(formName,form.getName());
+//
+//
+//        verify(executor).selectDataFromTable(connection, parentTableQuery);
+//
+//        verify(executor).selectDataFromTable(connection, firstDependentTableQuery);
+//
+//        verify(executor).selectDataFromTable(connection, secondDependentTableQuery);
+//    }
 }

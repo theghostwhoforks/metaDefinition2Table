@@ -1,6 +1,6 @@
 package builder;
 
-import model.query.FormTableCreateQueryMultiMap;
+import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class TableQueryBuilderTest {
     @Test
     public void shouldBuildAQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
-        FormTableCreateQueryMultiMap map = TableQueryBuilder.with().formDefinition(data).create();
+        FormTableQueryMultiMap map = TableQueryBuilder.with().formDefinition(data).create();
         String expected = "CREATE TABLE delivery_details_and_pnc1 (ID SERIAL PRIMARY KEY,entity_id VARCHAR(255),created_at timestamp default current_timestamp,uuid VARCHAR(255),today VARCHAR(255),pregnancyId VARCHAR(255),womanId VARCHAR(255));";
         assertEquals(expected, map.getTableQuery().asSql());
     }
@@ -24,7 +24,7 @@ public class TableQueryBuilderTest {
     @Test
     public void shouldBuildACreateTableQueryWithSubForms() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        FormTableCreateQueryMultiMap query = TableQueryBuilder.with().formDefinition(data).create();
+        FormTableQueryMultiMap query = TableQueryBuilder.with().formDefinition(data).create();
 
         String expectedIndependentTableCreationQuery = "CREATE TABLE doctor_visit (ID SERIAL PRIMARY KEY,entity_id VARCHAR(255),created_at timestamp default current_timestamp,doctor_name VARCHAR(255));";
         assertEquals(expectedIndependentTableCreationQuery, query.getTableQuery().asSql());

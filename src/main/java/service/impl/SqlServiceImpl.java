@@ -10,8 +10,10 @@ import executor.impl.StatementExecutorImpl;
 import model.Field;
 import model.Form;
 import model.ParentForm;
-import model.query.FormTableCreateQueryMultiMap;
+import model.SubForm;
+import model.query.FormTableQueryMultiMap;
 import model.query.Query;
+import model.query.SelectQuery;
 import service.SqlService;
 
 import java.sql.Connection;
@@ -37,7 +39,7 @@ public class SqlServiceImpl implements SqlService {
         logger.info("Creating Table. Data supplied - {}", data);
 
         try {
-            FormTableCreateQueryMultiMap createTable = TableQueryBuilder.with().formDefinition(data).create();
+            FormTableQueryMultiMap createTable = TableQueryBuilder.with().formDefinition(data).create();
             executor.createTable(createTable.getTableQuery(), connection);
             createTable.getLinkedTableQueries().forEach(query -> {
                 executor.createTable(query, connection);
@@ -96,16 +98,16 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public Form getDataFor(Connection connection, int id, String formName, List<String> subFormNames) {
-        FormTableCreateQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subFormNames);
+    public Form getDataFor(Connection connection, int id, String formName, String... subFormNames) {
+        FormTableQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
+
         ResultSet resultSet = executor.selectDataFromTable(connection, selectQueries.getTableQuery());
         List<Field> fields = new ArrayList();
         try {
             if(!resultSet.next()){
-                //TODO: Iterate better
+                //TODO: Iterate better.Create Wrapper object that is returned when executor returns.
                 return null;
             }
-
             Set<String> columnNames = getColumnNames(resultSet.getMetaData());
             for (String columnName : columnNames) {
                 String value = resultSet.getString(columnName);
@@ -114,24 +116,26 @@ public class SqlServiceImpl implements SqlService {
         } catch (SQLException e) {
             throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
         }
-//        List<SubForm> subForms = selectQueries.getLinkedTableQueries().stream().map(query -> executor.selectDataFromTable(connection, query))
-//                .map(resultSet -> {
-//                    HashMap<String, String> instance = new HashMap<>();
-//                    String tableName = null;
-//                    try {
-//                        ResultSetMetaData metaData = resultSet.getMetaData();
-//                        Set<String> columnNames = getColumnNames(metaData);
-//                        tableName = metaData.getTableName(1);
-//                        for (String columnName : columnNames) {
-//                            instance.put(columnName, resultSet.getString(columnName));
-//                        }
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                    }
-//                    List<Map<String, String>> instances = new ArrayList();
-//                    instances.add(instance);
-//                    return new SubForm(tableName, instances);
-//                }).collect(Collectors.toList());
-        return new ParentForm(fields,null);
+
+        List<SubForm> subForms = new ArrayList<>();
+        for (Query query : selectQueries.getLinkedTableQueries()){
+            try {
+                List<Map<String, String>> instances = new ArrayList<>();
+                ResultSet dependentTableResultSet = executor.selectDataFromTable(connection, query);
+                String tableName = ((SelectQuery)query).getTableName();
+                ResultSetMetaData subFormMetaData = dependentTableResultSet.getMetaData();
+                while(dependentTableResultSet.next()){
+                    Map<String, String> instance = new HashMap<>();
+                    for(String columnName : getColumnNames(subFormMetaData)){
+                        instance.put(columnName,dependentTableResultSet.getString(columnName));
+                    }
+                    instances.add(instance);
+                }
+                subForms.add(new SubForm(tableName,instances));
+            }catch (SQLException ex){
+                throw new MetaDataServiceRuntimeException("Shit just happened here",ex);
+            }
+        }
+        return new ParentForm(fields,subForms);
     }
 }

@@ -16,5 +16,5 @@ public interface SqlService {
     @Deprecated
     boolean updateTable(Connection connection, String data);
 
-    Form getDataFor(Connection connection,int id, String formName, List<String> subForms);
+    Form getDataFor(Connection connection,int id, String formName, String... subForms);
 }

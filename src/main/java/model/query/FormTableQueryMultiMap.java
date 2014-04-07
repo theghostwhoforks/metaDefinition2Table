@@ -2,11 +2,11 @@ package model.query;
 
 import java.util.List;
 
-public class FormTableCreateQueryMultiMap {
+public class FormTableQueryMultiMap {
     private Query tableQuery;
     private List<Query> linkedTableQueries;
 
-    public FormTableCreateQueryMultiMap(Query tableQuery, List<Query> linkedTableQueries) {
+    public FormTableQueryMultiMap(Query tableQuery, List<Query> linkedTableQueries) {
         this.tableQuery = tableQuery;
         this.linkedTableQueries = linkedTableQueries;
     }

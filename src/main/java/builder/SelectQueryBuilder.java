@@ -3,7 +3,7 @@ package builder;
 import com.google.gson.Gson;
 import constant.Constants;
 import model.FormDefinition;
-import model.query.FormTableCreateQueryMultiMap;
+import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectQuery;
 
@@ -38,9 +38,9 @@ public class SelectQueryBuilder implements Builder {
         return queries;
     };
 
-    public FormTableCreateQueryMultiMap createSelectQueriesFor(int id, String formName, List<String> subForms) {
+    public FormTableQueryMultiMap createSelectQueriesFor(int id, String formName, List<String> subForms) {
         List<Query> nestedTableQueries = subForms.stream().map(tableName ->
                 new SelectQuery(tableName, Constants.REFERENCED_FIELD_ID, id)).collect(Collectors.toList());
-        return new FormTableCreateQueryMultiMap(new SelectQuery(formName,"ID",id),nestedTableQueries);
+        return new FormTableQueryMultiMap(new SelectQuery(formName,"ID",id),nestedTableQueries);
     }
 }
