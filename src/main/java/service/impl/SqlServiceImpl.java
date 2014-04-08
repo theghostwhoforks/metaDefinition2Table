@@ -102,14 +102,14 @@ public class SqlServiceImpl implements SqlService {
         FormTableQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
 
         SelectQuery tableQuery = (SelectQuery) selectQueries.getTableQuery();
-        ResultSetWrapper resultSet = executor.selectDataFromTable(connection, tableQuery);
-        List<Field> fields = resultSet.getParentTableFields();
+        ResultSetWrapper resultSetWrapper = executor.selectDataFromTable(connection, tableQuery);
+        List<Field> fields = resultSetWrapper.getParentTableFields();
 
         List<SubForm> subForms = new ArrayList<>();
         for (Query query : selectQueries.getLinkedTableQueries()){
             List<Map<String, String>> instances = new ArrayList<>();
-            ResultSetWrapper dependentTableResultSet = executor.selectDataFromTable(connection, query);
-            dependentTableResultSet.addInstancesForATable(instances);
+            ResultSetWrapper dependentTableResultSetWrapper = executor.selectDataFromTable(connection, query);
+            dependentTableResultSetWrapper.addInstancesForATable(instances);
             String tableName = ((SelectQuery) query).getTableName();
             subForms.add(new SubForm(tableName, instances));
         }

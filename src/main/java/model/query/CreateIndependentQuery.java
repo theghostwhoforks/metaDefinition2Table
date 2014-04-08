@@ -26,7 +26,7 @@ public class CreateIndependentQuery implements Query{
     @Override
     public String asSql() {
         Function<String, String> stringToSql = query -> String.format("CREATE TABLE %s (%s,%s);", tableName, defaultsForIndependentTableCreation,query);
-        return new SimpleQuery(stringToSql.apply(fieldsWithDataTypes())).asSql();
+        return stringToSql.apply(fieldsWithDataTypes());
     }
 
     protected String fieldsWithDataTypes() {

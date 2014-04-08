@@ -24,12 +24,10 @@ public class ResultSetWrapper {
     }
 
     public List<Field> getParentTableFields() {
-        List<Field> fields = new ArrayList();
+        List<Field> fields = null;
         try {
             while (resultSet.next()) {
-                for (String columnName : getColumnNames(resultSet.getMetaData())) {
-                    fields.add(new Field(columnName, resultSet.getString(columnName)));
-                }
+                fields = getFields();
             }
             return fields;
         } catch (SQLException e) {
@@ -37,13 +35,19 @@ public class ResultSetWrapper {
         }
     }
 
+    private List<Field> getFields() throws SQLException {
+        List<Field> fields = new ArrayList() ;
+        for (String columnName : getColumnNames(resultSet.getMetaData())) {
+            fields.add(new Field(columnName, resultSet.getString(columnName)));
+        }
+        return fields;
+    }
+
     public void addInstancesForATable(List<Map<String, String>> instances) {
         try {
             while (resultSet.next()) {
                 Map<String, String> instance = new HashMap<>();
-                for (String columnName : getColumnNames(resultSet.getMetaData())) {
-                    instance.put(columnName, resultSet.getString(columnName));
-                }
+                getFields().stream().forEach(field -> instance.put(field.getName(),field.getValue()));
                 instances.add(instance);
             }
         } catch (SQLException ex) {

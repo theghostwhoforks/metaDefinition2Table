@@ -18,7 +18,7 @@ public class ResultSetWrapperTest {
     public ExpectedException thrown= ExpectedException.none();
 
     @Test
-    public void throwsExceptionWhenItDoesNotFindColumn() throws Exception {
+    public void throwsExceptionWhenNextOfResultSetForParentTableThrowsAnException() throws Exception {
         ResultSet resultSet = mock(ResultSet.class);
         ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
 
@@ -31,7 +31,7 @@ public class ResultSetWrapperTest {
     }
 
     @Test
-    public void throwsExceptionWhenItDoesNotFindColumnForSubForms() throws Exception {
+    public void throwsExceptionWhenNextOfResultSetThrowsAnException() throws Exception {
         ResultSet resultSet = mock(ResultSet.class);
         ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
 

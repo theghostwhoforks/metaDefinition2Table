@@ -4,7 +4,6 @@ public class SelectQuery implements Query {
     protected final String tableName;
     protected int id;
 
-    @Deprecated
     public SelectQuery(String tableName) {
         this.tableName = tableName;
     }

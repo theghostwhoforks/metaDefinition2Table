@@ -2,7 +2,10 @@ package service;
 
 import executor.impl.StatementExecutorImpl;
 import org.apache.commons.io.FileUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import service.impl.SqlServiceImpl;
 
@@ -15,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class SqlServiceIT {
 
     @Rule
-    public ExpectedException thrown= ExpectedException.none();
+    public ExpectedException thrown = ExpectedException.none();
 
     private Connection connection;
     private Statement statement;
@@ -68,7 +71,7 @@ public class SqlServiceIT {
 
         ResultSet resultSet = statement.executeQuery("select * from OOGA");
         int count = 0;
-        while (resultSet.next()){
+        while (resultSet.next()) {
             count++;
         }
         assertEquals(2, count);
@@ -80,12 +83,12 @@ public class SqlServiceIT {
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
-        service.createEntity(connection,data);
+        service.createEntity(connection, data);
 
         ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
 
         int count = 0;
-        while (resultSet.next()){
+        while (resultSet.next()) {
             count++;
         }
         assertEquals(1, count);
@@ -94,7 +97,7 @@ public class SqlServiceIT {
         ResultSet resultSet1 = statement.executeQuery("select * from medications_doctor_visit");
 
         int count1 = 0;
-        while (resultSet1.next()){
+        while (resultSet1.next()) {
             count1++;
         }
         assertEquals(2, count1);
@@ -113,7 +116,7 @@ public class SqlServiceIT {
         while (resultSet.next()) {
             count++;
         }
-        assertEquals(2,count);
+        assertEquals(2, count);
 
         statement.execute("delete from doctor_visit");
 
@@ -122,7 +125,7 @@ public class SqlServiceIT {
         while (resultSetAfterDelete.next()) {
             countAfterDelete++;
         }
-        assertEquals(0,countAfterDelete);
+        assertEquals(0, countAfterDelete);
 
     }
 
