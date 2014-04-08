@@ -3,7 +3,7 @@ package builder;
 
 import com.google.gson.Gson;
 import model.FormDefinition;
-import model.query.DeleteQuery;
+import model.query.DeleteEntityQuery;
 import model.query.Query;
 
 public class DeleteQueryBuilder implements Builder {
@@ -26,6 +26,6 @@ public class DeleteQueryBuilder implements Builder {
     }
 
     public Query DeleteEntity(int id) {
-        return new DeleteQuery(definition.getName(),id);
+        return new DeleteEntityQuery(definition.getName(),id);
     }
 }

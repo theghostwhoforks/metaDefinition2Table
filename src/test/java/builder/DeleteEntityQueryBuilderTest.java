@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class DeleteQueryBuilderTest {
+public class DeleteEntityQueryBuilderTest {
     @Test
     public void shouldBuildADeleteQueryFromFormDefinition() throws Exception {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));

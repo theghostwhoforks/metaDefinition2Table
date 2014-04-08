@@ -1,11 +1,11 @@
 package model.query;
 
-public class DeleteQuery implements Query {
+public class DeleteEntityQuery implements Query {
     public static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE ID = %s;";
     private final String tableName;
     private int id;
 
-    public DeleteQuery(String tableName, int id) {
+    public DeleteEntityQuery(String tableName, int id) {
         this.tableName = tableName;
         this.id = id;
     }
@@ -18,8 +18,8 @@ public class DeleteQuery implements Query {
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        if (!(other instanceof DeleteQuery)) return false;
-        return asSql().equals(((DeleteQuery) other).asSql());
+        if (!(other instanceof DeleteEntityQuery)) return false;
+        return asSql().equals(((DeleteEntityQuery) other).asSql());
     }
 
     @Override

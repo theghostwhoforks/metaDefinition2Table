@@ -92,7 +92,7 @@ public class SqlServiceTest {
         int id = 1;
         service.updateEntity(connection, data, id);
 
-        DeleteQuery query = new DeleteQuery("delivery_details_and_pnc1",id);
+        DeleteEntityQuery query = new DeleteEntityQuery("delivery_details_and_pnc1",id);
 
         verify(executor).deleteEntity(connection, query);
         verify(executor).insertIntoTable(any(InsertQuery.class),any(Connection.class));
