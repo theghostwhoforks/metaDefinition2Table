@@ -1,5 +1,6 @@
 package service;
 
+import constant.Constants;
 import executor.impl.StatementExecutorImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -170,5 +171,40 @@ public class SqlServiceIT {
         assertEquals(originalColumnCount + 1, currentColumnCount);
         assertEquals(dependentTable1OriginalColumnCount + 1, dependentTable1CurrentColumnCount1);
         assertEquals(dependentTable2OriginalColumnCount + 1, dependentTable2CurrentColumnCount2);
+    }
+
+    @Test
+    public void shouldUpdateAnEntity() throws SQLException, ClassNotFoundException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/insertSubForm.json")));
+        String updatedData = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms_001.json")));
+
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        service.createTable(connection, data);
+        service.createEntity(connection, data);
+
+        ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
+        int id = 0;
+        String beneficiaryId = "B801";
+        if (resultSet.next()) {
+            id = resultSet.getInt(1);
+            assertEquals(beneficiaryId,resultSet.getString(Constants.ENTITY_ID));
+        }
+        service.updateEntity(connection, updatedData, id);
+
+
+        ResultSet independentTableresultSet = statement.executeQuery("select * from doctor_visit");
+        if (independentTableresultSet.next()) {
+            assertEquals("B802", independentTableresultSet.getString(Constants.ENTITY_ID));
+        }
+
+        ResultSet firstDependentResultSet = statement.executeQuery("select * from medications_doctor_visit");
+        if (firstDependentResultSet.next()) {
+            assertEquals("change", firstDependentResultSet.getString("medicationName"));
+        }
+
+        ResultSet secondDependentTableresultSet = statement.executeQuery("select * from tests_doctor_visit");
+        if (secondDependentTableresultSet.next()) {
+            assertEquals("no", secondDependentTableresultSet.getString("testRequired"));
+        }
     }
 }

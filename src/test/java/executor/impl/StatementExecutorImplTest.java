@@ -49,6 +49,22 @@ public class StatementExecutorImplTest {
     }
 
     @Test
+    public void shouldDeleteAnEntity() throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        executor.deleteEntity(connection, EntityQueryBuilder.with().nothing());
+        verify(statement).execute();
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenDeleteStatementExecutionFails() throws SQLException {
+        thrown.expect(MetaDataServiceRuntimeException.class);
+        thrown.expectMessage(Constants.DELETE_ENTITY_ERROR);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
+        executor.deleteEntity(connection, EntityQueryBuilder.with().nothing());
+    }
+
+    @Test
     public void shouldInsertIntoTable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         ResultSet resultSet = mock(ResultSet.class);

@@ -87,6 +87,18 @@ public class SqlServiceTest {
     }
 
     @Test
+    public void shouldDeleteAnEntity() throws SQLException, IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
+        int id = 1;
+        service.updateEntity(connection, data, id);
+
+        DeleteQuery query = new DeleteQuery("delivery_details_and_pnc1",id);
+
+        verify(executor).deleteEntity(connection, query);
+        verify(executor).insertIntoTable(any(InsertQuery.class),any(Connection.class));
+    }
+
+    @Test
     public void shouldUpdateATable() throws SQLException, IOException {
         ResultSetMetaData parentTableResultSetMock = mock(ResultSetMetaData.class);
         ResultSetMetaData firstDependentTableResultSetMock = mock(ResultSetMetaData.class);

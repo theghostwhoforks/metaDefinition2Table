@@ -17,5 +17,7 @@ public interface StatementExecutor {
     public boolean updateTable(Connection connection, Query updateQuery);
 
     <T> T selectDataFromTable(Connection connection, Query query,Function<ResultSet,T> function);
+
+    boolean deleteEntity(Connection connection, Query query);
 }
 

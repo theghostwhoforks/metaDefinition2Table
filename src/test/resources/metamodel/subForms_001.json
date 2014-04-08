@@ -12,13 +12,7 @@
                 "name": "doctor_visit_id",
                 "source": "doctor_visit_id",
                 "persistenceName": "id",
-                "value": "B801"
-            },
-            {
-                "name": "name",
-                "source": "doctor_visit_id",
-                "persistenceName": "id",
-                "value": "sample"
+                "value": "B802"
             }
         ],
         "sub_forms": [
@@ -35,7 +29,7 @@
                 ],
                 "instances": [
                     {
-                        "medicationName": "sample",
+                        "medicationName": "change",
                         "id": "B801"
                     }
                 ]
@@ -53,7 +47,7 @@
                 ],
                 "instances": [
                     {
-                        "testRequired": "yes",
+                        "testRequired": "no",
                         "id": "B801"
                     }
                 ]

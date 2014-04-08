@@ -1,9 +1,6 @@
 package service.impl;
 
-import builder.EntityQueryBuilder;
-import builder.SelectQueryBuilder;
-import builder.TableQueryBuilder;
-import builder.UpdateQueryBuilder;
+import builder.*;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
@@ -67,6 +64,13 @@ public class SqlServiceImpl implements SqlService {
             throw ex;
         }
         return true;
+    }
+
+    @Override
+    public boolean updateEntity(Connection connection, String data, int id) {
+        Query query = DeleteQueryBuilder.with().formDefinition(data).DeleteEntity(id);
+        executor.deleteEntity(connection,query);
+        return createEntity(connection,data);
     }
 
     @Override

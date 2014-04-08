@@ -16,4 +16,5 @@ public class Constants {
     public static final String ENTITY_ID = "entity_id";
     public static final String REFERENCED_FIELD_ID = "parent_id";
     public static final String ID_SUFFIX = "_id";
+    public static final String DELETE_ENTITY_ERROR = "There was an error while deleting an entity";
 }

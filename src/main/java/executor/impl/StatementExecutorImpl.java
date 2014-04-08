@@ -61,6 +61,12 @@ public class StatementExecutorImpl implements StatementExecutor {
         return returnValue;
     }
 
+    @Override
+    public boolean deleteEntity(Connection connection, Query query) {
+        executeStatement(connection,query.asSql(),Constants.DELETE_ENTITY_ERROR);
+        return true;
+    }
+
 
     private int executeQueryReturningInsertedId(Connection connection, String sqlStatement, String message) {
         PreparedStatement statement = null;
