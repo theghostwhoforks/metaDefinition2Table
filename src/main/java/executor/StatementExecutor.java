@@ -1,5 +1,6 @@
 package executor;
 
+import javafx.util.Pair;
 import model.query.Query;
 import model.query.SelectQuery;
 
@@ -12,7 +13,7 @@ public interface StatementExecutor {
     public boolean createTable(Query query, Connection connection);
     public int insertIntoTable(Query query, Connection connection);
 
-    ResultSetMetaData getDescribedData(SelectQuery query, Connection connection);
+    Pair<String, ResultSetMetaData> getDescribedData(SelectQuery query, Connection connection);
 
     public boolean updateTable(Connection connection, Query updateQuery);
 

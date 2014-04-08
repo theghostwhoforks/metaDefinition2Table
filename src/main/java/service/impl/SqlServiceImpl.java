@@ -82,8 +82,8 @@ public class SqlServiceImpl implements SqlService {
         queries.stream().map(query -> executor.getDescribedData(query, connection))
                 .forEach(resultSet -> {
                     try {
-                        Set<String> fields = getColumnNames(resultSet);
-                        allColumns.put(resultSet.getTableName(1), fields);
+                        Set<String> fields = getColumnNames(resultSet.getValue());
+                        allColumns.put(resultSet.getKey(), fields);
                     } catch (SQLException e2) {
                         throw new MetaDataServiceRuntimeException("could not get the data from tables", e2);
                     }
@@ -113,7 +113,7 @@ public class SqlServiceImpl implements SqlService {
         Set<String> fields = new HashSet();
         int columnCount = resultSet.getColumnCount();
         for (int i = 1; i <= columnCount; i++)
-            fields.add(resultSet.getColumnName(i));
+            fields.add(resultSet.getColumnName(i).toUpperCase());
         return fields;
     }
 }

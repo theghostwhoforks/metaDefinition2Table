@@ -3,6 +3,7 @@ package executor.impl;
 import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
+import javafx.util.Pair;
 import model.query.Query;
 import model.query.SelectQuery;
 import org.apache.commons.dbutils.DbUtils;
@@ -28,7 +29,7 @@ public class StatementExecutorImpl implements StatementExecutor {
     }
 
     @Override
-    public ResultSetMetaData getDescribedData(SelectQuery query, Connection connection) {
+    public Pair<String, ResultSetMetaData> getDescribedData(SelectQuery query, Connection connection) {
         ResultSetMetaData metaData = null;
         try {
             PreparedStatement statement = connection.prepareStatement((query).createDescribeQuery());
@@ -36,7 +37,7 @@ public class StatementExecutorImpl implements StatementExecutor {
         } catch (SQLException e) {
             throwException(Constants.DESCRIBE_TABLE_ERROR,e);
         }
-        return metaData;
+        return new Pair<>(query.getTableName().toUpperCase(), metaData);
     }
 
     @Override
