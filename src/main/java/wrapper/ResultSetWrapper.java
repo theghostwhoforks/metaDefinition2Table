@@ -43,15 +43,19 @@ public class ResultSetWrapper {
         return fields;
     }
 
-    public void addInstancesForATable(List<Map<String, String>> instances) {
+    public List<Map<String, String>> tableAsAnInstance() {
+        List<Map<String, String>> instances = new ArrayList<>();
         try {
             while (resultSet.next()) {
                 Map<String, String> instance = new HashMap<>();
-                getFields().stream().forEach(field -> instance.put(field.getName(),field.getValue()));
+                for (String s : getColumnNames(resultSet.getMetaData())) {
+                    instance.put(s,resultSet.getString(s));
+                }
                 instances.add(instance);
             }
         } catch (SQLException ex) {
             throw new MetaDataServiceRuntimeException("could not get the data from nested tables", ex);
         }
+        return instances;
     }
 }

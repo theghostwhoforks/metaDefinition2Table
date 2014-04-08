@@ -33,7 +33,7 @@ public class SelectQueryBuilderTest {
         String formName = "doctor_visit";
         List<String> subForms = Arrays.asList("medications_doctor_visit", "tests_doctor_visit");
         int id = 1;
-        FormTableQueryMultiMap queries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subForms);
+        FormTableQueryMultiMap<SelectQuery> queries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subForms);
 
         String parentTableQuery = "SELECT * FROM doctor_visit WHERE ID = 1;";
         String firstDependentTableQuery = "SELECT * FROM medications_doctor_visit WHERE parent_id = 1;";

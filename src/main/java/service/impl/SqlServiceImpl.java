@@ -11,6 +11,7 @@ import model.Field;
 import model.Form;
 import model.ParentForm;
 import model.SubForm;
+import model.query.CreateIndependentQuery;
 import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectQuery;
@@ -39,7 +40,7 @@ public class SqlServiceImpl implements SqlService {
         logger.info("Creating Table. Data supplied - {}", data);
 
         try {
-            FormTableQueryMultiMap createTable = TableQueryBuilder.with().formDefinition(data).create();
+            FormTableQueryMultiMap<CreateIndependentQuery> createTable = TableQueryBuilder.with().formDefinition(data).create();
             executor.createTable(createTable.getTableQuery(), connection);
             createTable.getLinkedTableQueries().forEach(query -> {
                 executor.createTable(query, connection);
@@ -99,19 +100,17 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public Form getDataFor(Connection connection, int id, String formName, String... subFormNames) {
-        FormTableQueryMultiMap selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
+        FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
 
-        SelectQuery tableQuery = (SelectQuery) selectQueries.getTableQuery();
+        SelectQuery tableQuery = selectQueries.getTableQuery();
         ResultSetWrapper resultSetWrapper = executor.selectDataFromTable(connection, tableQuery);
         List<Field> fields = resultSetWrapper.getParentTableFields();
 
-        List<SubForm> subForms = new ArrayList<>();
-        for (Query query : selectQueries.getLinkedTableQueries()){
-            List<Map<String, String>> instances = new ArrayList<>();
+        List<SubForm> subForms = new ArrayList();
+        for (SelectQuery query : selectQueries.getLinkedTableQueries()){
             ResultSetWrapper dependentTableResultSetWrapper = executor.selectDataFromTable(connection, query);
-            dependentTableResultSetWrapper.addInstancesForATable(instances);
-            String tableName = ((SelectQuery) query).getTableName();
-            subForms.add(new SubForm(tableName, instances));
+            List<Map<String, String>> instances = dependentTableResultSetWrapper.tableAsAnInstance();
+            subForms.add(new SubForm(query.getTableName(), instances));
         }
         return new ParentForm(tableQuery.getTableName(),fields,subForms);
     }
