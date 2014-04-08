@@ -14,8 +14,7 @@ public class ParentForm implements Form {
     @SerializedName(value = "sub_forms")
     private List<SubForm> subForms = new ArrayList<>();
 
-    public ParentForm() {
-    }
+    public ParentForm() {}
 
     public ParentForm(String name, List<Field> fields, List<SubForm> subForms) {
         this.name = name;
@@ -33,5 +32,4 @@ public class ParentForm implements Form {
 
     @Override
     public String getName() { return name; }
-
 }

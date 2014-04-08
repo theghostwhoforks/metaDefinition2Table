@@ -4,6 +4,7 @@ import exception.MetaDataServiceRuntimeException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import sql.ResultSetExtensions;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ResultSetWrapperTest {
+public class ResultSetExtensionsTest {
 
     @Rule
     public ExpectedException thrown= ExpectedException.none();
@@ -27,7 +28,7 @@ public class ResultSetWrapperTest {
         when(resultSet.next()).thenThrow(new SQLException());
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
 
-        new ResultSetWrapper(resultSet).getParentTableFields();
+        ResultSetExtensions.getParentTableFields(resultSet);
     }
 
     @Test
@@ -40,6 +41,6 @@ public class ResultSetWrapperTest {
         when(resultSet.next()).thenThrow(new SQLException());
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
 
-        new ResultSetWrapper(resultSet).tableAsAnInstance();
+        ResultSetExtensions.tableAsAnInstance(resultSet);
     }
 }

@@ -16,7 +16,7 @@ import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectQuery;
 import service.SqlService;
-import wrapper.ResultSetExtensions;
+import sql.ResultSetExtensions;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -90,14 +90,6 @@ public class SqlServiceImpl implements SqlService {
         return true;
     }
 
-    private Set<String> getColumnNames(ResultSetMetaData resultSet) throws SQLException {
-        Set<String> fields = new HashSet();
-        int columnCount = resultSet.getColumnCount();
-        for (int i = 1; i <= columnCount; i++)
-            fields.add(resultSet.getColumnName(i));
-        return fields;
-    }
-
     @Override
     public Form getDataFor(Connection connection, int id, String formName, String... subFormNames) {
         FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
@@ -107,9 +99,18 @@ public class SqlServiceImpl implements SqlService {
 
         List<SubForm> subForms = new ArrayList();
         for (SelectQuery query : selectQueries.getLinkedTableQueries()){
-            List<Map<String, String>> instances = executor.selectDataFromTable(connection, query,x -> ResultSetExtensions.tableAsAnInstance(x));
+            List<Map<String, String>> instances = executor.selectDataFromTable(connection, query, x -> ResultSetExtensions.tableAsAnInstance(x));
             subForms.add(new SubForm(query.getTableName(), instances));
         }
         return new ParentForm(tableQuery.getTableName(),fields,subForms);
+    }
+
+
+    private Set<String> getColumnNames(ResultSetMetaData resultSet) throws SQLException {
+        Set<String> fields = new HashSet();
+        int columnCount = resultSet.getColumnCount();
+        for (int i = 1; i <= columnCount; i++)
+            fields.add(resultSet.getColumnName(i));
+        return fields;
     }
 }
