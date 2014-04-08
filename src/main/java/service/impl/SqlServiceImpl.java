@@ -9,7 +9,6 @@ import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
 import model.Field;
 import model.Form;
-import model.ParentForm;
 import model.SubForm;
 import model.query.CreateIndependentQuery;
 import model.query.FormTableQueryMultiMap;
@@ -102,7 +101,7 @@ public class SqlServiceImpl implements SqlService {
             List<Map<String, String>> instances = executor.selectDataFromTable(connection, query, x -> ResultSetExtensions.tableAsAnInstance(x));
             subForms.add(new SubForm(query.getTableName(), instances));
         }
-        return new ParentForm(tableQuery.getTableName(),fields,subForms);
+        return new Form(tableQuery.getTableName(),fields,subForms);
     }
 
 

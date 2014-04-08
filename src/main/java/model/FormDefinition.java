@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class FormDefinition {
     @SerializedName(value = "form")
-    private ParentForm form;
+    private Form form;
 
-    public ParentForm getForm() {
+    public Form getForm() {
         return form;
     }
     public String getName() {

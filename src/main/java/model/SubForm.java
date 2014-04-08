@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class SubForm implements Form {
+public class SubForm {
 
     public static final String INSTANCE_ID_FIELD = "id";
     private String name;
@@ -25,15 +25,12 @@ public class SubForm implements Form {
         this.instances = instances;
     }
 
-    @Override
     public String getName() {return name;}
 
-    @Override
     public List<SubForm> getSubForms() {
         return null;
     }
 
-    @Override
     public List<Field> getFields() {
         return fields;
     }

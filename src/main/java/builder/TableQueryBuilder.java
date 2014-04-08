@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import model.Field;
 import model.Form;
 import model.FormDefinition;
-import model.ParentForm;
-import model.query.*;
+import model.query.CreateDependentQuery;
+import model.query.CreateIndependentQuery;
+import model.query.FormTableQueryMultiMap;
+import model.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +32,12 @@ public class TableQueryBuilder implements Builder {
 
     public FormTableQueryMultiMap create() {
         List<Query> linkedTableQueries = new ArrayList<>();
-        ParentForm parentForm = definition.getForm();
+        Form form = definition.getForm();
         String formName = definition.getName();
         List<Field> fields = definition.getForm().getFields();
 
         CreateIndependentQuery independentQuery = new CreateIndependentQuery(fields, formName);
-        linkedTableQueries.addAll(queriesForSubForms(parentForm));
+        linkedTableQueries.addAll(queriesForSubForms(form));
         return new FormTableQueryMultiMap(independentQuery,linkedTableQueries);
     }
 
