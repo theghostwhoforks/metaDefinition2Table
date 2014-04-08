@@ -16,7 +16,7 @@ import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectQuery;
 import service.SqlService;
-import wrapper.ResultSetWrapper;
+import wrapper.ResultSetExtensions;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -103,13 +103,11 @@ public class SqlServiceImpl implements SqlService {
         FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
 
         SelectQuery tableQuery = selectQueries.getTableQuery();
-        ResultSetWrapper resultSetWrapper = executor.selectDataFromTable(connection, tableQuery);
-        List<Field> fields = resultSetWrapper.getParentTableFields();
+        List<Field> fields = executor.selectDataFromTable(connection, tableQuery, x -> ResultSetExtensions.getParentTableFields(x));
 
         List<SubForm> subForms = new ArrayList();
         for (SelectQuery query : selectQueries.getLinkedTableQueries()){
-            ResultSetWrapper dependentTableResultSetWrapper = executor.selectDataFromTable(connection, query);
-            List<Map<String, String>> instances = dependentTableResultSetWrapper.tableAsAnInstance();
+            List<Map<String, String>> instances = executor.selectDataFromTable(connection, query,x -> ResultSetExtensions.tableAsAnInstance(x));
             subForms.add(new SubForm(query.getTableName(), instances));
         }
         return new ParentForm(tableQuery.getTableName(),fields,subForms);

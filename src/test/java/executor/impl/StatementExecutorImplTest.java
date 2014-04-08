@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Function;
 
 import static org.mockito.Mockito.*;
 
@@ -109,14 +110,14 @@ public class StatementExecutorImplTest {
         thrown.expect(MetaDataServiceRuntimeException.class);
         thrown.expectMessage(Constants.SELECT_DATA_FROM_TABLE_ERROR);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
-        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing());
+        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing(), Function.identity());
     }
 
     @Test
     public void shouldGetDataFromATable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing());
+        executor.selectDataFromTable(connection, SelectQueryBuilder.with().nothing(),Function.identity());
         verify(statement).executeQuery();
     }
 }

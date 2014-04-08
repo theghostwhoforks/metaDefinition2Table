@@ -6,9 +6,9 @@ import executor.StatementExecutor;
 import model.query.Query;
 import model.query.SelectQuery;
 import org.apache.commons.dbutils.DbUtils;
-import wrapper.ResultSetWrapper;
 
 import java.sql.*;
+import java.util.function.Function;
 
 public class StatementExecutorImpl implements StatementExecutor {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StatementExecutor.class);
@@ -17,22 +17,50 @@ public class StatementExecutorImpl implements StatementExecutor {
     public boolean createTable(Query query, Connection connection) {
         String sqlStatement = query.asSql();
         logger.info(String.format("Creating table. Query - %s", sqlStatement));
-        return executeQuery(connection, sqlStatement, Constants.CREATE_TABLE_ERROR);
+        return executeStatement(connection, sqlStatement, Constants.CREATE_TABLE_ERROR);
     }
 
-    private boolean executeQuery(Connection connection, String sqlStatement, String message) {
-        PreparedStatement statement = null;
+    @Override
+    public int insertIntoTable(Query query, Connection connection) {
+        String sqlStatement = query.asSql();
+        logger.info(String.format("Inserting into table. Query - %s", sqlStatement));
+        return executeQueryReturningInsertedId(connection, sqlStatement, Constants.INSERT_INTO_TABLE_ERROR);
+    }
+
+    @Override
+    public ResultSetMetaData getDescribedData(SelectQuery query, Connection connection) {
+        ResultSetMetaData metaData = null;
         try {
-            statement = executeStatement(connection, sqlStatement, message);
-        } finally {
-            try {
-                DbUtils.close(statement);
-            } catch (SQLException e) {
-                throwException("Failed to close statement", e);
-            }
+            PreparedStatement statement = connection.prepareStatement((query).createDescribeQuery());
+            metaData = statement.getMetaData();
+        } catch (SQLException e) {
+            throwException(Constants.DESCRIBE_TABLE_ERROR,e);
         }
+        return metaData;
+    }
+
+    @Override
+    public boolean updateTable(Connection connection, Query updateQuery) {
+        executeStatement(connection, updateQuery.asSql(), Constants.UPDATE_TABLE_ERROR);
         return true;
     }
+
+    @Override
+    public <T> T selectDataFromTable(Connection connection, Query query,Function<ResultSet,T> function) {
+        PreparedStatement statement = null;
+        T returnValue = null;
+        try {
+            statement = connection.prepareStatement(query.asSql());
+            ResultSet resultSet = statement.executeQuery();
+            returnValue = function.apply(resultSet);
+        } catch (SQLException e) {
+            throwException(Constants.SELECT_DATA_FROM_TABLE_ERROR,e);
+        }finally {
+            DbUtils.closeQuietly(statement);
+        }
+        return returnValue;
+    }
+
 
     private int executeQueryReturningInsertedId(Connection connection, String sqlStatement, String message) {
         PreparedStatement statement = null;
@@ -60,50 +88,16 @@ public class StatementExecutorImpl implements StatementExecutor {
         throw new MetaDataServiceRuntimeException(message, e);
     }
 
-    private PreparedStatement executeStatement(Connection connection, String sqlStatement, String message) {
+    private boolean executeStatement(Connection connection, String sqlStatement, String message) {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(sqlStatement);
             statement.execute();
         } catch (SQLException e) {
             throwException(message, e);
+        }finally {
+            DbUtils.closeQuietly(statement);
         }
-        return statement;
-    }
-
-    @Override
-    public int insertIntoTable(Query query, Connection connection) {
-        String sqlStatement = query.asSql();
-        logger.info(String.format("Inserting into table. Query - %s", sqlStatement));
-        return executeQueryReturningInsertedId(connection, sqlStatement, Constants.INSERT_INTO_TABLE_ERROR);
-    }
-    @Override
-    public ResultSetMetaData getDescribedData(SelectQuery query, Connection connection) {
-        ResultSetMetaData metaData = null;
-        try {
-            PreparedStatement statement = connection.prepareStatement((query).createDescribeQuery());
-            metaData = statement.getMetaData();
-        } catch (SQLException e) {
-            throwException(Constants.DESCRIBE_TABLE_ERROR,e);
-        }
-        return metaData;
-    }
-
-    @Override
-    public boolean updateTable(Connection connection, Query updateQuery) {
-        executeStatement(connection, updateQuery.asSql(), Constants.UPDATE_TABLE_ERROR);
         return true;
-    }
-
-    @Override
-    public ResultSetWrapper selectDataFromTable(Connection connection, Query query) {
-        ResultSet resultSet = null;
-        try {
-            PreparedStatement statement = connection.prepareStatement(query.asSql());
-            resultSet = statement.executeQuery();
-        } catch (SQLException e) {
-            throwException(Constants.SELECT_DATA_FROM_TABLE_ERROR,e);
-        }
-        return new ResultSetWrapper(resultSet);
     }
 }
