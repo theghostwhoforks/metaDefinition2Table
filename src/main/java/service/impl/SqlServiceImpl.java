@@ -89,7 +89,7 @@ public class SqlServiceImpl implements SqlService {
                     }
                 });
         List<Query> updateQuery = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
-        updateQuery.stream().forEach(query -> executor.updateTable(connection, query));
+        updateQuery.stream().filter(query -> !query.asSql().isEmpty()).forEach(query -> executor.updateTable(connection, query));
         return true;
     }
 

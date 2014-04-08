@@ -111,7 +111,6 @@ public class StatementExecutorImplTest {
         executor.updateTable(connection, UpdateQueryBuilder.with().nothing());
     }
 
-
     @Test
     public void shouldUpdateATable() throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
@@ -119,7 +118,6 @@ public class StatementExecutorImplTest {
         executor.updateTable(connection, UpdateQueryBuilder.with().nothing());
         verify(statement).execute();
     }
-
 
     @Test
     public void shouldThrowAnExceptionWhenSelectStatementExecutionFails() throws SQLException {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UpdateQuery implements Query {
     private String formName;
@@ -21,12 +22,14 @@ public class UpdateQuery implements Query {
 
     @Override
     public String asSql() {
+        Stream<Field> filter = fields.stream()
+                .filter(filterKeywordsAndSections().and(field -> !currentColumns.contains(field.getName().toUpperCase()))
+                .and(fi -> !String.format("%s_id", formName).equals(fi.getName())));
+        List<Field> fieldsToBeAltered = filter.collect(Collectors.toList());
+        if (fieldsToBeAltered.isEmpty()) return "";
         Function<String, String> converter = str -> String.format("ALTER TABLE %s %s;", formName, str);
-        String statement = converter.apply(fields.stream()
-                        .filter(filterKeywordsAndSections().and(field -> !currentColumns.contains(field.getName().toUpperCase()))
-                                .and(fi-> !String.format("%s_id", formName).equals(fi.getName())))
-                        .map(f -> String.format("%s VARCHAR(255)", String.format("ADD COLUMN %s", f.getName())))
-                        .collect(Collectors.joining(Constants.DELIMITER)));
+        String statement = converter.apply(fieldsToBeAltered.stream().map(f -> String.format("%s VARCHAR(255)", String.format("ADD COLUMN %s", f.getName())))
+                .collect(Collectors.joining(Constants.DELIMITER)));
         return statement;
     }
 

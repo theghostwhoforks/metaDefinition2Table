@@ -30,6 +30,26 @@ public class UpdateQueryBuilderTest {
     }
 
     @Test
+    public void shouldGiveAnEmptyStringWhenThereAreNoExtraFields() throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
+
+        Set<String> columns = new HashSet();
+        columns.add("PREGNANCYID");
+        columns.add("TODAY");
+        columns.add("UUID");
+        columns.add("FORMHUB");
+        columns.add("WOMANID");
+
+        Map<String,Set<String>> allColumns = new HashMap();
+        allColumns.put("DELIVERY_DETAILS_AND_PNC1",columns);
+
+        List<Query> query = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
+        String expected = "";
+
+        assertEquals(expected,query.get(0).asSql());
+    }
+
+    @Test
     public void shouldBuildAListOfUpdateQueriesForLinkedTables() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/update/sub_forms_002.json")));
 
