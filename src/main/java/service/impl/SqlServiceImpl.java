@@ -109,7 +109,9 @@ public class SqlServiceImpl implements SqlService {
         for (Query query : selectQueries.getLinkedTableQueries()){
             List<Map<String, String>> instances = new ArrayList<>();
             ResultSetWrapper dependentTableResultSet = executor.selectDataFromTable(connection, query);
-            subForms.add(new SubForm(((SelectQuery)query).getTableName(), dependentTableResultSet.getSubForm(instances)));
+            dependentTableResultSet.addInstancesForATable(instances);
+            String tableName = ((SelectQuery) query).getTableName();
+            subForms.add(new SubForm(tableName, instances));
         }
         return new ParentForm(tableQuery.getTableName(),fields,subForms);
     }

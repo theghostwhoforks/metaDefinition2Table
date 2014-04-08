@@ -37,7 +37,7 @@ public class ResultSetWrapper {
         }
     }
 
-    public List<Map<String, String>> getSubForm(List<Map<String, String>> instances) {
+    public void addInstancesForATable(List<Map<String, String>> instances) {
         try {
             while (resultSet.next()) {
                 Map<String, String> instance = new HashMap<>();
@@ -46,7 +46,6 @@ public class ResultSetWrapper {
                 }
                 instances.add(instance);
             }
-            return instances;
         } catch (SQLException ex) {
             throw new MetaDataServiceRuntimeException("could not get the data from nested tables", ex);
         }

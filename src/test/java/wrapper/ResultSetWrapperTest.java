@@ -40,6 +40,6 @@ public class ResultSetWrapperTest {
         when(resultSet.next()).thenThrow(new SQLException());
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
 
-        new ResultSetWrapper(resultSet).getSubForm(null);
+        new ResultSetWrapper(resultSet).addInstancesForATable(null);
     }
 }
