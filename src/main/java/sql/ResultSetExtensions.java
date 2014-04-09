@@ -46,11 +46,16 @@ public class ResultSetExtensions {
         return instances;
     }
 
-    private static Set<String> getColumnNames(ResultSetMetaData metaData) throws SQLException {
+    public static Set<String> getColumnNames(ResultSetMetaData metaData) {
         Set<String> fields = new HashSet();
-        int columnCount = metaData.getColumnCount();
-        for (int i = 1; i <= columnCount; i++)
-            fields.add(metaData.getColumnName(i));
+        int columnCount = 0;
+        try {
+            columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++)
+                fields.add(metaData.getColumnName(i));
+        } catch (SQLException e) {
+            throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
+        }
         return fields;
     }
 }

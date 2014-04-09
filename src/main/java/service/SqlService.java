@@ -11,5 +11,5 @@ public interface SqlService {
     boolean updateEntity(Connection connection,String data, int id);
     boolean updateTable(Connection connection, String data);
 
-    Form getDataFor(Connection connection,int id, String formName, String... subForms);
+    Form selectData(Connection connection, int id, String formName, String... subForms);
 }

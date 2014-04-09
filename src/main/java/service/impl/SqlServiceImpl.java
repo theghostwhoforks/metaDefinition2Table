@@ -15,8 +15,6 @@ import service.SqlService;
 import sql.ResultSetExtensions;
 
 import java.sql.Connection;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.*;
 
 public class SqlServiceImpl implements SqlService {
@@ -76,25 +74,17 @@ public class SqlServiceImpl implements SqlService {
     @Override
     public boolean updateTable(Connection connection, String data) {
         List<SelectQuery> queries = SelectQueryBuilder.with().formDefinition(data).createDescribeQuery();
-
         Map<String, Set<String>> allColumns = new HashMap();
-
-        queries.stream().map(query -> executor.getDescribedData(query, connection))
-                .forEach(resultSet -> {
-                    try {
-                        Set<String> fields = getColumnNames(resultSet.getValue());
-                        allColumns.put(resultSet.getKey(), fields);
-                    } catch (SQLException e2) {
-                        throw new MetaDataServiceRuntimeException("could not get the data from tables", e2);
-                    }
-                });
+        queries.stream()
+                .map(query -> executor.getDescribedData(query, connection))
+                .forEach(pair -> allColumns.put(pair.getKey(), ResultSetExtensions.getColumnNames(pair.getValue())));
         List<Query> updateQuery = UpdateQueryBuilder.with().formDefinition(data).update(allColumns);
         updateQuery.stream().filter(query -> !query.asSql().isEmpty()).forEach(query -> executor.updateTable(connection, query));
         return true;
     }
 
     @Override
-    public Form getDataFor(Connection connection, int id, String formName, String... subFormNames) {
+    public Form selectData(Connection connection, int id, String formName, String... subFormNames) {
         FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
 
         SelectQuery tableQuery = selectQueries.getTableQuery();
@@ -106,14 +96,5 @@ public class SqlServiceImpl implements SqlService {
             subForms.add(new SubForm(query.getTableName(), instances));
         }
         return new Form(tableQuery.getTableName(),fields,subForms);
-    }
-
-
-    private Set<String> getColumnNames(ResultSetMetaData resultSet) throws SQLException {
-        Set<String> fields = new HashSet();
-        int columnCount = resultSet.getColumnCount();
-        for (int i = 1; i <= columnCount; i++)
-            fields.add(resultSet.getColumnName(i).toUpperCase());
-        return fields;
     }
 }

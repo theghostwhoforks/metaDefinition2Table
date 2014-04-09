@@ -193,18 +193,15 @@ public class SqlServiceIT {
 
 
         ResultSet independentTableresultSet = statement.executeQuery("select * from doctor_visit");
-        if (independentTableresultSet.next()) {
+        if (independentTableresultSet.next())
             assertEquals("B802", independentTableresultSet.getString(Constants.ENTITY_ID));
-        }
 
         ResultSet firstDependentResultSet = statement.executeQuery("select * from medications_doctor_visit");
-        if (firstDependentResultSet.next()) {
+        if (firstDependentResultSet.next())
             assertEquals("change", firstDependentResultSet.getString("medicationName"));
-        }
 
         ResultSet secondDependentTableresultSet = statement.executeQuery("select * from tests_doctor_visit");
-        if (secondDependentTableresultSet.next()) {
+        if (secondDependentTableresultSet.next())
             assertEquals("no", secondDependentTableresultSet.getString("testRequired"));
-        }
     }
 }
