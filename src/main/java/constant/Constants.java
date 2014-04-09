@@ -13,6 +13,6 @@ public class Constants {
     public static final String SELECT_DATA_FROM_TABLE_ERROR = "There was an error while getting data from the table";
     public static final String DELIMITER = ",";
     public static final String ENTITY_ID = "entity_id";
-    public static final String ID_SUFFIX = "_id";
+    public static final String ID_SUFFIX = ".id";
     public static final String DELETE_ENTITY_ERROR = "There was an error while deleting an entity";
 }

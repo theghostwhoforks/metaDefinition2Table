@@ -2,6 +2,7 @@ package builder;
 
 
 import com.google.gson.Gson;
+import constant.Constants;
 import model.EntityField;
 import model.Field;
 import model.FormDefinition;
@@ -43,7 +44,7 @@ public class EntityQueryBuilder implements Builder {
     public Query createEntity() {
         final String formName = definition.getName();
         Stream<Field> fields = definition.getForm().getFields().stream().filter(Field::hasValue)
-                .map(f -> String.format("%s_id", formName).equals(f.getName()) ?
+                .map(f -> String.format("%s%s", formName, Constants.ID_SUFFIX).equals(f.getName()) ?
                         new EntityField(ENTITY_ID, f.getValue()) : f);
         return new InsertQuery(formName, Stream.concat(fields, Stream.of(new Field(MODIFIED_BY_USER, modifiedByUser))));
     }

@@ -9,8 +9,8 @@
                 "source": "doctor_visit.doctor_name"
             },
             {
-                "name": "doctor_visit_id",
-                "source": "doctor_visit_id",
+                "name": "doctor_visit.id",
+                "source": "doctor_visit.id",
                 "persistenceName": "id",
                 "value": "B801"
             }

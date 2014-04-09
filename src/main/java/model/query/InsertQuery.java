@@ -24,7 +24,7 @@ public class InsertQuery implements Query {
 
     @Override
     public String asSql() {
-        Function<? super Field, ? extends String> quoteValue = (x) -> String.format("'%s'",x.getValue());
+        Function<? super Field, ? extends String> quoteValue = (x) -> String.format("'%s'",x.getValue().replace("'",""));
 
         Collector<Field, ?, SortedMap<String, String>> collector = Collectors.toMap(Field::getName, quoteValue, (x,y) -> x + ": " + y, TreeMap<String, String>::new);
         SortedMap<String, String> collect = fields.stream().collect(collector);

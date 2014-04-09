@@ -9,15 +9,14 @@
                 "source": "doctor_visit.formhub"
             },
             {
-                "name": "doctor_visit_id",
-                "source": "doctor_visit_id",
+                "name": "doctor_visit.id",
+                "source": "doctor_visit.id",
                 "persistenceName": "id",
                 "value": "B801"
             },
             {
                 "name": "name",
-                "source": "doctor_visit_id",
-                "persistenceName": "id",
+                "source": "name",
                 "value": "sample"
             }
         ],

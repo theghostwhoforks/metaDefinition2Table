@@ -8,8 +8,8 @@
                 "bind": "/model/instance/delivery_details_and_pnc1/sectionA/pregnancyId"
             },
             {
-                "name": "delivery_details_and_pnc1_id",
-                "source": "delivery_details_and_pnc1_id",
+                "name": "delivery_details_and_pnc1.id",
+                "source": "delivery_details_and_pnc1.id",
                 "persistenceName": "id",
                 "value": "B801"
             }
