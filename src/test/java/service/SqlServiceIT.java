@@ -67,13 +67,14 @@ public class SqlServiceIT {
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
 
-        service.createEntity(connection, data);
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
+        service.createEntity(connection, data, "dataEntry1");
 
         ResultSet resultSet = statement.executeQuery("select * from OOGA");
         int count = 0;
         while (resultSet.next()) {
             count++;
+            assertEquals("dataEntry1", resultSet.getString("modified_by"));
         }
         assertEquals(2, count);
     }
@@ -84,7 +85,7 @@ public class SqlServiceIT {
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry2");
 
         ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
 
@@ -110,7 +111,7 @@ public class SqlServiceIT {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
 
         ResultSet resultSet = statement.executeQuery("select * from tests_doctor_visit");
         int count = 0;
@@ -180,7 +181,7 @@ public class SqlServiceIT {
 
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
         service.createTable(connection, data);
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
 
         ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
         int id = 0;
@@ -189,7 +190,7 @@ public class SqlServiceIT {
             id = resultSet.getInt(1);
             assertEquals(beneficiaryId,resultSet.getString(Constants.ENTITY_ID));
         }
-        service.updateEntity(connection, updatedData, id);
+        service.updateEntity(connection, updatedData, id, "dataEntry1");
 
 
         ResultSet independentTableresultSet = statement.executeQuery("select * from doctor_visit");

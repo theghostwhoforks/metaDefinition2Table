@@ -15,21 +15,21 @@ public class EntityQueryBuilderTest {
     @Test
     public void shouldBuildAnInsertQuery() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/sample.json")));
-        Query query = EntityQueryBuilder.with().formDefinition(data).createEntity();
-        String expected = "INSERT INTO delivery_details_and_pnc1 (entity_id,today,uuid) VALUES ('42','sample3','sample2');";
+        Query query = EntityQueryBuilder.with().formDefinition(data).modifiedByUser("dataEntry2").createEntity();
+        String expected = "INSERT INTO delivery_details_and_pnc1 (entity_id,modified_by,today,uuid) VALUES ('42','dataEntry2','sample3','sample2');";
         assertEquals(expected, query.asSql());
     }
 
     @Test
     public void shouldBuildAInsertQueryWithSubForms() throws IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        List<Query> queries = EntityQueryBuilder.with().formDefinition(data).createSubEntities(1);
+        List<Query> queries = EntityQueryBuilder.with().formDefinition(data).modifiedByUser("dataEntry2").createSubEntities(1);
 
         List<String> expectedList = new ArrayList<>();
-        expectedList.add("INSERT INTO medications_doctor_visit (medicationName,parent_id) VALUES ('sample','1');");
-        expectedList.add("INSERT INTO medications_doctor_visit (medicationName,parent_id) VALUES ('sample1','1');");
-        expectedList.add("INSERT INTO tests_doctor_visit (parent_id,testRequired) VALUES ('1','yes');");
-        expectedList.add("INSERT INTO tests_doctor_visit (parent_id,testRequired) VALUES ('1','no');");
+        expectedList.add("INSERT INTO medications_doctor_visit (medicationName,modified_by,parent_id) VALUES ('sample','dataEntry2','1');");
+        expectedList.add("INSERT INTO medications_doctor_visit (medicationName,modified_by,parent_id) VALUES ('sample1','dataEntry2','1');");
+        expectedList.add("INSERT INTO tests_doctor_visit (modified_by,parent_id,testRequired) VALUES ('dataEntry2','1','yes');");
+        expectedList.add("INSERT INTO tests_doctor_visit (modified_by,parent_id,testRequired) VALUES ('dataEntry2','1','no');");
 
         assertEquals(expectedList.get(0), queries.get(0).asSql());
         assertEquals(expectedList.get(1), queries.get(1).asSql());

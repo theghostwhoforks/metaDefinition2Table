@@ -14,8 +14,10 @@ import java.util.stream.Stream;
 
 public class EntityQueryBuilder implements Builder {
     private static final String ENTITY_ID = "entity_id";
+    private static final String MODIFIED_BY_USER = "modified_by";
     public static final String REFERENCED_FIELD_ID = "parent_id";
     private FormDefinition definition;
+    private String modifiedByUser;
 
     public static EntityQueryBuilder with() {
         return new EntityQueryBuilder();
@@ -29,6 +31,11 @@ public class EntityQueryBuilder implements Builder {
         return this;
     }
 
+    public EntityQueryBuilder modifiedByUser(String modifiedByUser) {
+        this.modifiedByUser = modifiedByUser;
+        return this;
+    }
+
     public Query nothing() {
         return () -> "";
     }
@@ -38,7 +45,7 @@ public class EntityQueryBuilder implements Builder {
         Stream<Field> fields = definition.getForm().getFields().stream().filter(Field::hasValue)
                 .map(f -> String.format("%s_id", formName).equals(f.getName()) ?
                         new EntityField(ENTITY_ID, f.getValue()) : f);
-        return new InsertQuery(formName, fields);
+        return new InsertQuery(formName, Stream.concat(fields, Stream.of(new Field(MODIFIED_BY_USER, modifiedByUser))));
     }
 
     public List<Query> createSubEntities(Integer foreignKey) {
@@ -48,7 +55,7 @@ public class EntityQueryBuilder implements Builder {
                 .<InsertQuery>flatMap(subForm ->
                 subForm.getFieldValues().map(instance ->
                     new InsertQuery(subFormTableName(formName,subForm.getName()),
-                                    Stream.concat(instance, Stream.of(foreignKeyField)))
+                                    Stream.concat(instance, Stream.of(foreignKeyField, new Field(MODIFIED_BY_USER, modifiedByUser))))
                 )).collect(Collectors.toList());
     }
 }

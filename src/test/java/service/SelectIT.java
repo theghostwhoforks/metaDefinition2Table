@@ -18,7 +18,7 @@ public class SelectIT {
 
     private Connection connection;
     private Statement statement;
-    private SqlServiceImpl service;
+    private SqlService service;
 
     @Before
     public void setUp() throws Exception {
@@ -43,22 +43,22 @@ public class SelectIT {
 
         Form form = service.selectData(connection, primaryId, formName, "medications_doctor_visit", "tests_doctor_visit");
 
-        assertEquals("doctor_visit",form.getName());
-        assertEquals(4, form.getFields().size());
-        assertEquals(2,form.getSubForms().size());
+        assertEquals("doctor_visit", form.getName());
+        assertEquals(5, form.getFields().size());
+        assertEquals(2, form.getSubForms().size());
         SubForm firstSubForm = form.getSubForms().get(0);
         SubForm secondSubForm = form.getSubForms().get(1);
         int firstSubFormSize = firstSubForm.getFieldValues().collect(Collectors.toList()).size();
-        assertEquals(2,firstSubFormSize);
+        assertEquals(2, firstSubFormSize);
         int secondSubFormSize = secondSubForm.getFieldValues().collect(Collectors.toList()).size();
-        assertEquals(2,secondSubFormSize);
+        assertEquals(2, secondSubFormSize);
     }
 
     private int setUpData(String formName) throws IOException, SQLException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        service.createTable(connection,data);
-        service.createEntity(connection,data);
-        PreparedStatement preparedStatement = connection.prepareStatement(String.format("SELECT ID FROM %s ORDER BY CREATED_AT DESC LIMIT 1;", formName));
+        service.createTable(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
+        PreparedStatement preparedStatement = connection.prepareStatement(String.format("SELECT ID FROM %s ORDER BY modified_at DESC LIMIT 1;", formName));
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet.getInt("ID");

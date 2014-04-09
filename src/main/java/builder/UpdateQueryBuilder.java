@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UpdateQueryBuilder implements Builder{
-    private static final String ENTITY_ID = "entityId";
-    private static final String DELIMITER = ",";
     private FormDefinition definition;
 
     public static UpdateQueryBuilder with() {

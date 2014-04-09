@@ -47,9 +47,9 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public boolean createEntity(Connection connection, String data) {
+    public boolean createEntity(Connection connection, String data, String modifiedByUser) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
-        EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data);
+        EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data).modifiedByUser(modifiedByUser);
         Query query = entityQueryBuilder.createEntity();
         logger.info("Inserting into Table. Query - {}", query.asSql());
         int foreignKey = executor.insertIntoTable(query, connection);
@@ -65,10 +65,10 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public boolean updateEntity(Connection connection, String data, int id) {
+    public boolean updateEntity(Connection connection, String data, int id, String modifiedByUser) {
         Query query = DeleteQueryBuilder.with().formDefinition(data).DeleteEntity(id);
-        executor.deleteEntity(connection,query);
-        return createEntity(connection,data);
+        executor.deleteEntity(connection, query);
+        return createEntity(connection, data, modifiedByUser);
     }
 
     @Override
@@ -91,10 +91,10 @@ public class SqlServiceImpl implements SqlService {
         List<Field> fields = executor.selectDataFromTable(connection, tableQuery, x -> ResultSetExtensions.getParentTableFields(x));
 
         List<SubForm> subForms = new ArrayList();
-        for (SelectQuery query : selectQueries.getLinkedTableQueries()){
+        for (SelectQuery query : selectQueries.getLinkedTableQueries()) {
             List<Map<String, String>> instances = executor.selectDataFromTable(connection, query, x -> ResultSetExtensions.tableAsAnInstance(x));
             subForms.add(new SubForm(query.getTableName(), instances));
         }
-        return new Form(tableQuery.getTableName(),fields,subForms);
+        return new Form(tableQuery.getTableName(), fields, subForms);
     }
 }

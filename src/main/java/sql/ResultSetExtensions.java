@@ -48,7 +48,7 @@ public class ResultSetExtensions {
 
     public static Set<String> getColumnNames(ResultSetMetaData metaData) {
         Set<String> fields = new HashSet();
-        int columnCount = 0;
+        int columnCount;
         try {
             columnCount = metaData.getColumnCount();
             for (int i = 1; i <= columnCount; i++)

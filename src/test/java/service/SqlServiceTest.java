@@ -51,7 +51,7 @@ public class SqlServiceTest {
     @Test
     public void shouldInsertIntoATable() throws SQLException {
         String data = "{\"form\" : {\"bind_type\" : \"OOGA\", \"fields\" : [{\"name\" : \"BOOGA\",\"value\" : \"TEST\"},{\"name\" : \"SOOGA\"}]}}";
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
         verify(executor).insertIntoTable(any(InsertQuery.class), any(Connection.class));
     }
 
@@ -78,11 +78,11 @@ public class SqlServiceTest {
     public void shouldInsertIntoNestedTables() throws SQLException, IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
 
-        InsertQuery parentQuery = new InsertQuery("doctor_visit", Stream.of(new Field("entity_id", "B801")));
-        InsertQuery subFormQuery = new InsertQuery("medications_doctor_visit", Stream.of(new Field("medicationName", "sample"), new Field("parent_id", "1")));
+        InsertQuery parentQuery = new InsertQuery("doctor_visit", Stream.of(new Field("entity_id", "B801"), new Field("modified_by", "dataEntry1")));
+        InsertQuery subFormQuery = new InsertQuery("medications_doctor_visit", Stream.of(new Field("medicationName", "sample"), new Field("parent_id", "1"), new Field("modified_by", "dataEntry1")));
         when(executor.insertIntoTable(parentQuery, connection)).thenReturn(1);
 
-        service.createEntity(connection, data);
+        service.createEntity(connection, data, "dataEntry1");
 
         verify(executor).insertIntoTable(subFormQuery, connection);
     }
@@ -91,7 +91,7 @@ public class SqlServiceTest {
     public void shouldDeleteAnEntity() throws SQLException, IOException {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
         int id = 1;
-        service.updateEntity(connection, data, id);
+        service.updateEntity(connection, data, id, "dataEntry1");
 
         DeleteEntityQuery query = new DeleteEntityQuery("delivery_details_and_pnc1",id);
 

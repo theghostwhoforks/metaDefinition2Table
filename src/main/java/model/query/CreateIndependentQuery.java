@@ -13,7 +13,7 @@ public class CreateIndependentQuery implements Query{
     private static final Predicate<Field> filterPredicate =
             ((Predicate<Field>) f -> f.isNotReservedKeyword()).and(f -> f.isNotSection());
 
-    private static String defaultsForIndependentTableCreation =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),created_at timestamp default current_timestamp",
+    private static String defaultsForIndependentTableCreation =  String.format("ID SERIAL PRIMARY KEY,%s VARCHAR(255),modified_at timestamp default current_timestamp,modified_by VARCHAR(255)",
                                                                  Constants.ENTITY_ID);
     protected List<Field> fields;
     protected String tableName;
