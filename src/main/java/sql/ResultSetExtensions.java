@@ -52,7 +52,7 @@ public class ResultSetExtensions {
         try {
             columnCount = metaData.getColumnCount();
             for (int i = 1; i <= columnCount; i++)
-                fields.add(metaData.getColumnName(i));
+                fields.add(metaData.getColumnName(i).toUpperCase());
         } catch (SQLException e) {
             throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
         }
