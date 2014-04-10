@@ -24,7 +24,8 @@ public class UpdateQuery implements Query {
     public String asSql() {
         Stream<Field> filter = fields.stream()
                 .filter(filterKeywordsAndSections().and(field -> !currentColumns.contains(field.getName().toUpperCase()))
-                .and(fi -> !String.format("%s%s", formName, Constants.ID_SUFFIX).equals(fi.getName())));
+                .and(fi -> !String.format("%s%s", formName, Constants.ID_SUFFIX).equals(fi.getName())))
+                .distinct();
         List<Field> fieldsToBeAltered = filter.collect(Collectors.toList());
         if (fieldsToBeAltered.isEmpty()) return "";
         Function<String, String> converter = str -> String.format("ALTER TABLE %s %s;", formName, str);
