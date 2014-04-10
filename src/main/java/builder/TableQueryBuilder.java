@@ -43,6 +43,7 @@ public class TableQueryBuilder implements Builder {
 
     private List<Query> queriesForSubForms(final Form form) {
         return form.getSubForms().stream()
+                .filter(subForm -> subForm.getName() != null)
                 .map(subForm -> new CreateDependentQuery(subForm.getFields(),subForm.getName(),form.getName()))
                 .collect(Collectors.toList());
     }

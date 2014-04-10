@@ -53,6 +53,7 @@ public class EntityQueryBuilder implements Builder {
         final String formName = definition.getName();
         final Field foreignKeyField = new Field(REFERENCED_FIELD_ID, foreignKey.toString());
         return definition.getForm().getSubForms().stream()
+                .filter(subForm -> subForm.getName() != null)
                 .<InsertQuery>flatMap(subForm ->
                 subForm.getFieldValues().map(instance ->
                     new InsertQuery(subFormTableName(formName,subForm.getName()),

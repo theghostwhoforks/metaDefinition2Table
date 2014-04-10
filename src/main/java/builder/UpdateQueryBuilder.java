@@ -36,7 +36,7 @@ public class UpdateQueryBuilder implements Builder{
         queries.add(new UpdateQuery(formName,form.getFields(),columns.get(formName.toUpperCase())));
         columns.remove(formName.toUpperCase());
 
-        queries.addAll(form.getSubForms().stream().map(subForm -> {
+        queries.addAll(form.getSubForms().stream().filter(subForm -> subForm.getName() != null).map(subForm -> {
             String tableName = subFormTableName(formName, subForm.getName());
             return new UpdateQuery(tableName, subForm.getFields(), columns.get(tableName.toUpperCase()));
         }).collect(Collectors.toList()));

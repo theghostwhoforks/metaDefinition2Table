@@ -33,7 +33,7 @@ public class SelectQueryBuilder implements Builder {
         String name = definition.getName();
         List<SelectQuery> queries = new ArrayList();
         queries.add(new SelectQuery(name));
-        queries.addAll(definition.getForm().getSubForms().stream().map(subForm ->
+        queries.addAll(definition.getForm().getSubForms().stream().filter(subForm -> subForm.getName() != null).map(subForm ->
                 new SelectQuery(subFormTableName(name, subForm.getName()))).collect(Collectors.toList()));
         return queries;
     };
