@@ -3,10 +3,10 @@ package executor.impl;
 import constant.Constants;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
-import javafx.util.Pair;
 import model.query.Query;
 import model.query.SelectQuery;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.sql.*;
 import java.util.function.Function;
@@ -37,7 +37,7 @@ public class StatementExecutorImpl implements StatementExecutor {
         } catch (SQLException e) {
             throwException(Constants.DESCRIBE_TABLE_ERROR,e);
         }
-        return new Pair<>(query.getTableName().toUpperCase(), metaData);
+        return Pair.of(query.getTableName().toUpperCase(), metaData);
     }
 
     @Override

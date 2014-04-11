@@ -1,10 +1,10 @@
 package service;
 
 import executor.StatementExecutor;
-import javafx.util.Pair;
 import model.Field;
 import model.query.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import service.impl.SqlServiceImpl;
@@ -110,16 +110,16 @@ public class SqlServiceTest {
         SelectQuery firstDependentTableSelectQuery = new SelectQuery("medications_doctor_visit");
         SelectQuery secondDependentTableSelectQuery = new SelectQuery("tests_doctor_visit");
 
-        when(executor.getDescribedData(parentTableSelectQuery, connection)).thenReturn(new Pair<>("DOCTOR_VISIT", parentTableResultSetMock));
+        when(executor.getDescribedData(parentTableSelectQuery, connection)).thenReturn(Pair.of("DOCTOR_VISIT", parentTableResultSetMock));
 
         when(parentTableResultSetMock.getColumnCount()).thenReturn(1);
         when(parentTableResultSetMock.getColumnName(1)).thenReturn("DOCTOR_NAME");
 
-        when(executor.getDescribedData(firstDependentTableSelectQuery, connection)).thenReturn(new Pair<>("MEDICATIONS_DOCTOR_VISIT", firstDependentTableResultSetMock));
+        when(executor.getDescribedData(firstDependentTableSelectQuery, connection)).thenReturn(Pair.of("MEDICATIONS_DOCTOR_VISIT", firstDependentTableResultSetMock));
         when(firstDependentTableResultSetMock.getColumnCount()).thenReturn(1);
         when(firstDependentTableResultSetMock.getColumnName(1)).thenReturn("MEDICATIONNAME");
 
-        when(executor.getDescribedData(secondDependentTableSelectQuery, connection)).thenReturn(new Pair<>("TESTS_DOCTOR_VISIT", secondDependentTableResultSetMock));
+        when(executor.getDescribedData(secondDependentTableSelectQuery, connection)).thenReturn(Pair.of("TESTS_DOCTOR_VISIT", secondDependentTableResultSetMock));
         when(secondDependentTableResultSetMock.getColumnCount()).thenReturn(1);
         when(secondDependentTableResultSetMock.getColumnName(1)).thenReturn("TESTREQUIRED");
 
