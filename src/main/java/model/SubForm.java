@@ -35,7 +35,9 @@ public class SubForm {
         return fields;
     }
 
-    public Stream<Stream<Field>> getFieldValues() {
+    public List<Map<String, String>> getInstances() { return instances; }
+
+    public Stream<Stream<Field>> instancesAsStreamOfFields() {
         return instances.stream().map(instance ->
                         instance.keySet().stream()
                                 .map(key -> new Field(key, instance.get(key)))

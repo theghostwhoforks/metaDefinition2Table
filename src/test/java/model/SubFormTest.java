@@ -20,10 +20,10 @@ public class SubFormTest {
         List<SubForm> subForms = definition.getForm().getSubForms();
         assertEquals(2,subForms.size());
 
-        List<Stream<Field>> collect = subForms.get(0).getFieldValues().collect(Collectors.toList());
+        List<Stream<Field>> collect = subForms.get(0).instancesAsStreamOfFields().collect(Collectors.toList());
         assertEquals(2, collect.size());
 
-        List<Stream<Field>> secondSubFormFields = subForms.get(1).getFieldValues().collect(Collectors.toList());
+        List<Stream<Field>> secondSubFormFields = subForms.get(1).instancesAsStreamOfFields().collect(Collectors.toList());
         assertEquals(2, secondSubFormFields.size());
     }
 }

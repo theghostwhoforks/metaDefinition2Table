@@ -55,7 +55,7 @@ public class EntityQueryBuilder implements Builder {
         return definition.getForm().getSubForms().stream()
                 .filter(subForm -> subForm.getName() != null)
                 .<InsertQuery>flatMap(subForm ->
-                subForm.getFieldValues().map(instance ->
+                subForm.instancesAsStreamOfFields().map(instance ->
                     new InsertQuery(subFormTableName(formName,subForm.getName()),
                                     Stream.concat(instance, Stream.of(foreignKeyField, new Field(MODIFIED_BY_USER, modifiedByUser))))
                 )).collect(Collectors.toList());

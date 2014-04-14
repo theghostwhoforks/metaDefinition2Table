@@ -49,9 +49,9 @@ public class SelectIT {
         assertEquals(2, form.getSubForms().size());
         SubForm firstSubForm = form.getSubForms().get(0);
         SubForm secondSubForm = form.getSubForms().get(1);
-        int firstSubFormSize = firstSubForm.getFieldValues().collect(Collectors.toList()).size();
+        int firstSubFormSize = firstSubForm.instancesAsStreamOfFields().collect(Collectors.toList()).size();
         assertEquals(2, firstSubFormSize);
-        int secondSubFormSize = secondSubForm.getFieldValues().collect(Collectors.toList()).size();
+        int secondSubFormSize = secondSubForm.instancesAsStreamOfFields().collect(Collectors.toList()).size();
         assertEquals(2, secondSubFormSize);
     }
 
