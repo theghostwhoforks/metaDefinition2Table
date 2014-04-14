@@ -1,11 +1,13 @@
 package service.impl;
 
 import builder.*;
+import com.google.gson.Gson;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
 import model.Field;
 import model.Form;
+import model.FormDefinition;
 import model.SubForm;
 import model.query.CreateIndependentQuery;
 import model.query.FormTableQueryMultiMap;
@@ -16,6 +18,7 @@ import sql.ResultSetExtensions;
 
 import java.sql.Connection;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SqlServiceImpl implements SqlService {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlService.class);
@@ -47,7 +50,7 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public boolean createEntity(Connection connection, String data, String modifiedByUser) {
+    public int createEntity(Connection connection, String data, String modifiedByUser) {
         logger.info(String.format("Inserting into Table. Data supplied - %s", data));
         EntityQueryBuilder entityQueryBuilder = EntityQueryBuilder.with().formDefinition(data).modifiedByUser(modifiedByUser);
         Query query = entityQueryBuilder.createEntity();
@@ -61,11 +64,11 @@ public class SqlServiceImpl implements SqlService {
             logger.error("Error inserting into table(s) for form with data - {}", data);
             throw ex;
         }
-        return true;
+        return foreignKey;
     }
 
     @Override
-    public boolean updateEntity(Connection connection, String data, int id, String modifiedByUser) {
+    public int updateEntity(Connection connection, String data, int id, String modifiedByUser) {
         Query query = DeleteQueryBuilder.with().formDefinition(data).DeleteEntity(id);
         executor.deleteEntity(connection, query);
         return createEntity(connection, data, modifiedByUser);
@@ -84,8 +87,15 @@ public class SqlServiceImpl implements SqlService {
     }
 
     @Override
-    public Form selectData(Connection connection, int id, String formName, String... subFormNames) {
-        FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, Arrays.asList(subFormNames));
+    public Form selectEntity(Connection connection, int id, String formDefinition) {
+        //TODO: Use SelectQueryBuilder
+        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
+        List<String> subFormNames = definition.getForm().getSubForms().stream().map(x -> x.getName() + "_" + definition.getName()).collect(Collectors.toList());
+        return selectEntity(connection, id, definition.getName(), subFormNames);
+    }
+
+    private Form selectEntity(Connection connection, int id, String formName, List<String> subFormNames) {
+        FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subFormNames);
 
         SelectQuery tableQuery = selectQueries.getTableQuery();
         List<Field> fields = executor.selectDataFromTable(connection, tableQuery, x -> ResultSetExtensions.getParentTableFields(x));
@@ -97,4 +107,5 @@ public class SqlServiceImpl implements SqlService {
         }
         return new Form(tableQuery.getTableName(), fields, subForms);
     }
+
 }

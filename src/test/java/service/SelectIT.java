@@ -39,9 +39,10 @@ public class SelectIT {
     public void shouldSelectSingleEntity() throws Exception {
         String formName = "doctor_visit";
 
-        int primaryId = setUpData(formName);
+        String formDefinition = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
+        int primaryId = setUpData(formDefinition,formName);
 
-        Form form = service.selectData(connection, primaryId, formName, "medications_doctor_visit", "tests_doctor_visit");
+        Form form = service.selectEntity(connection, primaryId, formDefinition);
 
         assertEquals("doctor_visit", form.getName());
         assertEquals(5, form.getFields().size());
@@ -54,10 +55,9 @@ public class SelectIT {
         assertEquals(2, secondSubFormSize);
     }
 
-    private int setUpData(String formName) throws IOException, SQLException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-        service.createTable(connection, data);
-        service.createEntity(connection, data, "dataEntry1");
+    private int setUpData(String formDefinition, String formName) throws IOException, SQLException {
+        service.createTable(connection, formDefinition);
+        service.createEntity(connection, formDefinition, "dataEntry1");
         PreparedStatement preparedStatement = connection.prepareStatement(String.format("SELECT ID FROM %s ORDER BY modified_at DESC LIMIT 1;", formName));
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();

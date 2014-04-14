@@ -38,6 +38,8 @@ public class SelectQueryBuilder implements Builder {
         return queries;
     };
 
+    //TODO: Use formDefinition
+    @Deprecated
     public FormTableQueryMultiMap createSelectQueriesFor(int id, String formName, List<String> subForms) {
         List<Query> nestedTableQueries = subForms.stream().map(tableName ->
                 new SelectDependentQuery(tableName, id)).collect(Collectors.toList());
