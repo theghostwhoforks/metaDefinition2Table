@@ -11,7 +11,7 @@ public class DeleteEntityQueryBuilderTest {
         String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/5_fields.json")));
         int id = 1;
 
-        String statement = DeleteQueryBuilder.with().formDefinition(data).DeleteEntity(id).asSql();
+        String statement = DeleteQueryBuilder.with().formDefinition(data).deleteQueryFor(id).asSql();
 
         assertEquals("DELETE FROM delivery_details_and_pnc1 WHERE ID = 1;",statement);
 

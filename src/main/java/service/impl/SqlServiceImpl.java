@@ -66,7 +66,7 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public int updateEntity(Connection connection, String data, int id, String modifiedByUser) {
-        Query query = DeleteQueryBuilder.with().formDefinition(data).DeleteEntity(id);
+        Query query = DeleteQueryBuilder.with().formDefinition(data).deleteQueryFor(id);
         executor.deleteEntity(connection, query);
         return createEntity(connection, data, modifiedByUser);
     }

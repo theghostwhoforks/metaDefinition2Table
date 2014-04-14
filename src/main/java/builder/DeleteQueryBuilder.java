@@ -25,7 +25,7 @@ public class DeleteQueryBuilder implements Builder {
         return () -> "";
     }
 
-    public Query DeleteEntity(int id) {
+    public Query deleteQueryFor(int id) {
         return new DeleteEntityQuery(definition.getName(),id);
     }
 }
