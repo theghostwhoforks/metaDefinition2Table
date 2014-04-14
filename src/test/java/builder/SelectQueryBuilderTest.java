@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -29,11 +28,9 @@ public class SelectQueryBuilderTest {
 
     @Test
     public void shouldBuildASelectQueryForProvidedId() throws IOException {
-
-        String formName = "doctor_visit";
-        List<String> subForms = Arrays.asList("medications_doctor_visit", "tests_doctor_visit");
         int id = 1;
-        FormTableQueryMultiMap<SelectQuery> queries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subForms);
+        String definition = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
+        FormTableQueryMultiMap<SelectQuery> queries = SelectQueryBuilder.with().formDefinition(definition).createSelectQueriesFor(id);
 
         String parentTableQuery = "SELECT * FROM doctor_visit WHERE ID = 1;";
         String firstDependentTableQuery = "SELECT * FROM medications_doctor_visit WHERE parent_id = 1;";

@@ -1,13 +1,11 @@
 package service.impl;
 
 import builder.*;
-import com.google.gson.Gson;
 import exception.MetaDataServiceRuntimeException;
 import executor.StatementExecutor;
 import executor.impl.StatementExecutorImpl;
 import model.Field;
 import model.Form;
-import model.FormDefinition;
 import model.SubForm;
 import model.query.CreateIndependentQuery;
 import model.query.FormTableQueryMultiMap;
@@ -18,7 +16,6 @@ import sql.ResultSetExtensions;
 
 import java.sql.Connection;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SqlServiceImpl implements SqlService {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlService.class);
@@ -88,14 +85,7 @@ public class SqlServiceImpl implements SqlService {
 
     @Override
     public Form selectEntity(Connection connection, int id, String formDefinition) {
-        //TODO: Use SelectQueryBuilder
-        FormDefinition definition = new Gson().fromJson(formDefinition, FormDefinition.class);
-        List<String> subFormNames = definition.getForm().getSubForms().stream().map(x -> x.getName() + "_" + definition.getName()).collect(Collectors.toList());
-        return selectEntity(connection, id, definition.getName(), subFormNames);
-    }
-
-    private Form selectEntity(Connection connection, int id, String formName, List<String> subFormNames) {
-        FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().createSelectQueriesFor(id, formName, subFormNames);
+        FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().formDefinition(formDefinition).createSelectQueriesFor(id);
 
         SelectQuery tableQuery = selectQueries.getTableQuery();
         List<Field> fields = executor.selectDataFromTable(connection, tableQuery, x -> ResultSetExtensions.getParentTableFields(x));
@@ -107,5 +97,4 @@ public class SqlServiceImpl implements SqlService {
         }
         return new Form(tableQuery.getTableName(), fields, subForms);
     }
-
 }

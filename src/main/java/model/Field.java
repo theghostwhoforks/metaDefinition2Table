@@ -18,7 +18,6 @@ public class Field {
         return value != null;
     }
 
-
     public Boolean isNotReservedKeyword(){
         return !Constants.RESERVED_KEYWORDS.contains(name.toLowerCase());
     }

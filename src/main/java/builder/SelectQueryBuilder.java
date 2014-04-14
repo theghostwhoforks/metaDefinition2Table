@@ -1,7 +1,9 @@
 package builder;
 
 import com.google.gson.Gson;
+import model.Form;
 import model.FormDefinition;
+import model.SubForm;
 import model.query.FormTableQueryMultiMap;
 import model.query.Query;
 import model.query.SelectDependentQuery;
@@ -38,11 +40,12 @@ public class SelectQueryBuilder implements Builder {
         return queries;
     };
 
-    //TODO: Use formDefinition
-    @Deprecated
-    public FormTableQueryMultiMap createSelectQueriesFor(int id, String formName, List<String> subForms) {
-        List<Query> nestedTableQueries = subForms.stream().map(tableName ->
-                new SelectDependentQuery(tableName, id)).collect(Collectors.toList());
+    public FormTableQueryMultiMap createSelectQueriesFor(int id) {
+        Form form = definition.getForm();
+        String formName = form.getName();
+        List<SubForm> subForms = form.getSubForms();
+        List<Query> nestedTableQueries = subForms.stream().map(subForm ->
+                new SelectDependentQuery(subFormTableName(formName,subForm.getName()), id)).collect(Collectors.toList());
         return new FormTableQueryMultiMap(new SelectQuery(formName,id),nestedTableQueries);
     }
 }
