@@ -1,0 +1,75 @@
+{
+    "form": {
+        "bind_type": "doctor_visit",
+        "default_bind_path": "/model/instance/doctor_visit",
+        "fields": [
+            {
+                "name": "doctor_name",
+                "bind": "/model/instance/doctor_visit/doctor_name",
+                "source": "doctor_visit.doctor_name"
+            },
+            {
+                "name": "doctor_visit.id",
+                "source": "doctor_visit.id",
+                "persistenceName": "id",
+                "value": "B801"
+            }
+        ],
+        "sub_forms": [
+            {
+                "name": "medications",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/medications",
+                "fields": [
+                    {
+                        "name": "medicationName",
+                        "bind": "/model/instance/doctor_visit/medications/medicationName",
+                        "source": "doctor_visit.medicationName"
+                    },
+                    {
+                        "name": "dose",
+                        "bind": "/model/instance/doctor_visit/medications/dose",
+                        "source": "doctor_visit.dose"
+                    }
+                ],
+                "instances": [
+                    {
+                        "medicationName": "",
+                        "id": ""
+                    },
+                    {
+                        "medicationName": "",
+                        "id": ""
+                    }
+                ]
+            },
+            {
+                "name": "tests",
+                "bind_type": "doctor_visit",
+                "default_bind_path": "/model/instance/doctor_visit/tests",
+                "fields": [
+                    {
+                        "name": "testRequired",
+                        "bind": "/model/instance/doctor_visit/tests/testRequired",
+                        "source": "doctor_visit.testRequired"
+                    },
+                    {
+                        "name": "testRequiredName",
+                        "bind": "/model/instance/doctor_visit/tests/testRequiredName",
+                        "source": "doctor_visit.testRequiredName"
+                    }
+                ],
+                "instances": [
+                    {
+                        "testRequired": "",
+                        "id": "B801"
+                    },
+                    {
+                        "testRequired": "no",
+                        "id": "B801"
+                    }
+                ]
+            }
+        ]
+    }
+}
