@@ -3,6 +3,7 @@ package org.ict4h.formdefinition.service;
 import org.ict4h.formdefinition.constant.Constants;
 import org.ict4h.formdefinition.executor.impl.StatementExecutorImpl;
 import org.apache.commons.io.FileUtils;
+import org.ict4h.formdefinition.model.FormMetadata;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,6 +14,7 @@ import org.ict4h.formdefinition.service.impl.SqlServiceImpl;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -81,11 +83,9 @@ public class SqlServiceIT {
 
     @Test
     public void shouldInsertIntoNestedTables() throws SQLException, ClassNotFoundException, IOException {
-        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
-
         SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
-        service.createTable(connection, data);
-        service.createEntity(connection, data, "dataEntry2");
+
+        createDoctorVisitTableAndEntity(service);
 
         ResultSet resultSet = statement.executeQuery("select * from doctor_visit");
 
@@ -103,6 +103,12 @@ public class SqlServiceIT {
             count1++;
         }
         assertEquals(2, count1);
+    }
+
+    private void createDoctorVisitTableAndEntity(SqlService service) throws IOException {
+        String data = FileUtils.readFileToString(FileUtils.toFile(this.getClass().getResource("/metamodel/subForms.json")));
+        service.createTable(connection, data);
+        service.createEntity(connection, data, "dataEntry2");
     }
 
     @Test
@@ -204,5 +210,22 @@ public class SqlServiceIT {
         ResultSet secondDependentTableresultSet = statement.executeQuery("select * from tests_doctor_visit");
         if (secondDependentTableresultSet.next())
             assertEquals("no", secondDependentTableresultSet.getString("testRequired"));
+    }
+
+    @Test
+    public void shouldGiveFormMetaDataList() throws Exception {
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        String tableName = "doctor_visit";
+        String entityId = "B801";
+
+        createDoctorVisitTableAndEntity(service);
+
+        List<FormMetadata> formMetadataList = service.listMetadata(connection, entityId, tableName);
+        assertEquals(1,formMetadataList.size());
+
+        FormMetadata metadata = formMetadataList.get(0);
+        assertEquals(tableName,metadata.getName());
+        assertEquals(entityId,metadata.getEntityId());
+        assertEquals("dataEntry2", metadata.getCreatedBy());
     }
 }
