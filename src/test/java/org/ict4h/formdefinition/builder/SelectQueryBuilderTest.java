@@ -43,11 +43,11 @@ public class SelectQueryBuilderTest {
 
     @Test
     public void shouldBuildASelectQueryForProvidedBeneficiaryId() throws IOException {
-        int id = 1;
+        String entityId = "W313";
         String tableName = "doctor_visit";
-        SelectQuery selectQuery = SelectQueryBuilder.with().allEntitiesFor(id, tableName);
+        SelectQuery selectQuery = SelectQueryBuilder.with().listMetadata(entityId, tableName);
 
-        String expected = "SELECT ID FROM doctor_visit WHERE ENTITY_ID = 1;";
+        String expected = "SELECT ID FROM doctor_visit WHERE ENTITY_ID = 'W313';";
 
         assertEquals(expected, selectQuery.asSql());
     }

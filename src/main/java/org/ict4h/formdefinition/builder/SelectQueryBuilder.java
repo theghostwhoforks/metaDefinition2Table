@@ -46,7 +46,7 @@ public class SelectQueryBuilder implements Builder {
         return new FormTableQueryMultiMap(new SelectQuery(formName,id),nestedTableQueries);
     }
 
-    public SelectQuery allEntitiesFor(int beneficiaryId, String tableName) {
+    public SelectQuery listMetadata(String beneficiaryId, String tableName) {
         return new SelectAllQuery(tableName,beneficiaryId);
     }
 }
