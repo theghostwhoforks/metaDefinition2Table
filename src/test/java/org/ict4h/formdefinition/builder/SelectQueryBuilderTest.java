@@ -47,7 +47,7 @@ public class SelectQueryBuilderTest {
         String tableName = "doctor_visit";
         SelectQuery selectQuery = SelectQueryBuilder.with().listMetadata(entityId, tableName);
 
-        String expected = "SELECT ID FROM doctor_visit WHERE ENTITY_ID = 'W313';";
+        String expected = "SELECT id,modified_by,modified_at FROM doctor_visit WHERE ENTITY_ID = 'W313';";
 
         assertEquals(expected, selectQuery.asSql());
     }

@@ -47,6 +47,6 @@ public class SelectQueryBuilder implements Builder {
     }
 
     public SelectQuery listMetadata(String beneficiaryId, String tableName) {
-        return new SelectAllQuery(tableName,beneficiaryId);
+        return new ListAllMetadataQuery(tableName,beneficiaryId);
     }
 }

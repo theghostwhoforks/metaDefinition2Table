@@ -14,14 +14,13 @@ import java.util.stream.Collectors;
 public class ResultSetExtensions {
 
 
-    public static List<FormMetadata> mapToListOfFormMetadata(ResultSet resultSet, String formName){
+    public static List<FormMetadata> mapToListOfFormMetadata(ResultSet resultSet, String formName, String entityId){
         List<FormMetadata> metaDataList = new ArrayList<>();
         try{
             while (resultSet.next()){
                 int instanceId = resultSet.getInt(Constants.ID);
                 String createdAt = resultSet.getString(Constants.MODIFIED_AT);
                 String createdBy = resultSet.getString(Constants.MODIFIED_BY);
-                String entityId = resultSet.getString(Constants.ENTITY_ID);
                 metaDataList.add(new FormMetadata(formName, instanceId, entityId, createdBy, createdAt));
             }
         } catch (SQLException e) {

@@ -14,4 +14,24 @@ public class FormMetadata {
         this.createdBy = createdBy;
         this.createdAt = createdAt;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getInstanceId() {
+        return instanceId;
+    }
+
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
 }

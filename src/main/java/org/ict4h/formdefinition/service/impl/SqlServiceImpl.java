@@ -102,6 +102,6 @@ public class SqlServiceImpl implements SqlService {
     @Override
     public List<FormMetadata> listMetadata(Connection connection, String entityId, String formName) {
         SelectQuery selectQuery = SelectQueryBuilder.with().listMetadata(entityId, formName);
-        return executor.selectDataFromTable(connection,selectQuery, x -> ResultSetExtensions.mapToListOfFormMetadata(x,formName));
+        return executor.selectDataFromTable(connection,selectQuery, x -> ResultSetExtensions.mapToListOfFormMetadata(x,formName, entityId));
     }
 }

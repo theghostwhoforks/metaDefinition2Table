@@ -51,12 +51,13 @@ public class ResultSetExtensionsTest {
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         stub(resultSet.getInt(Constants.ID)).toReturn(1);
-        stub(resultSet.getString(Constants.ENTITY_ID)).toReturn("B213");
+        String entityId = "B213";
         stub(resultSet.getString(Constants.MODIFIED_AT)).toReturn("date");
         stub(resultSet.getString(Constants.MODIFIED_BY)).toReturn("me");
         String formName =   "doctor_visit";
-        List<FormMetadata> integers = ResultSetExtensions.mapToListOfFormMetadata(resultSet, formName);
-        assertEquals(1, integers.size());
+        List<FormMetadata> list = ResultSetExtensions.mapToListOfFormMetadata(resultSet, formName, entityId);
+        assertEquals(1, list.size());
+        assertEquals(formName,list.get(0).getName());
     }
 
     @Test
@@ -64,7 +65,7 @@ public class ResultSetExtensionsTest {
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.next()).thenReturn(false);
         String formName = "doctor_visit";
-        List<FormMetadata> integers = ResultSetExtensions.mapToListOfFormMetadata(resultSet, formName);
+        List<FormMetadata> integers = ResultSetExtensions.mapToListOfFormMetadata(resultSet, formName, null);
         assertEquals(0, integers.size());
         verify(resultSet,never()).getInt(anyString());
     }
