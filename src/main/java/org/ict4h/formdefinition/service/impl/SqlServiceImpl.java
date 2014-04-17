@@ -105,11 +105,12 @@ public class SqlServiceImpl implements SqlService {
     public Integer selectId(Connection connection, String tableName, Pair<String, String> keyValuePair) {
         Query query = SelectQueryBuilder.with().createSelectQueryFor(tableName, keyValuePair);
         List<Field> fields = executor.selectDataFromTable(connection, query, ResultSetExtensions::extractFields);
-        Optional<Field> id = fields.stream().
+        Optional<Field> optional = fields.stream().
                 filter(x -> x.getName().equalsIgnoreCase(Constants.ID)).
                 findFirst();
-        if(id.isPresent())
-            return Integer.parseInt(id.get().getValue());
+
+        if(optional.isPresent())
+            return Integer.parseInt(optional.get().getValue());
         return null;
     }
 
