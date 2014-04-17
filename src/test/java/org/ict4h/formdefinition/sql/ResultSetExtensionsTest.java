@@ -30,7 +30,7 @@ public class ResultSetExtensionsTest {
         when(resultSet.next()).thenThrow(new SQLException());
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
 
-        ResultSetExtensions.getParentTableFields(resultSet);
+        ResultSetExtensions.extractFields(resultSet);
     }
 
     @Test

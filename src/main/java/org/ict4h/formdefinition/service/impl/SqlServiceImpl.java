@@ -1,6 +1,8 @@
 package org.ict4h.formdefinition.service.impl;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.ict4h.formdefinition.builder.*;
+import org.ict4h.formdefinition.constant.Constants;
 import org.ict4h.formdefinition.exception.MetaDataServiceRuntimeException;
 import org.ict4h.formdefinition.executor.StatementExecutor;
 import org.ict4h.formdefinition.executor.impl.StatementExecutorImpl;
@@ -89,7 +91,7 @@ public class SqlServiceImpl implements SqlService {
         FormTableQueryMultiMap<SelectQuery> selectQueries = SelectQueryBuilder.with().formDefinition(formDefinition).createSelectQueriesFor(id);
 
         SelectQuery tableQuery = selectQueries.getTableQuery();
-        List<Field> fields = executor.selectDataFromTable(connection, tableQuery, ResultSetExtensions::getParentTableFields);
+        List<Field> fields = executor.selectDataFromTable(connection, tableQuery, ResultSetExtensions::extractFields);
 
         List<SubForm> subForms = new ArrayList();
         for (SelectQuery query : selectQueries.getLinkedTableQueries()) {
@@ -97,6 +99,18 @@ public class SqlServiceImpl implements SqlService {
             subForms.add(new SubForm(query.getTableName(), instances));
         }
         return new Form(tableQuery.getTableName(), fields, subForms);
+    }
+
+    @Override
+    public Integer selectId(Connection connection, String tableName, Pair<String, String> keyValuePair) {
+        Query query = SelectQueryBuilder.with().createSelectQueryFor(tableName, keyValuePair);
+        List<Field> fields = executor.selectDataFromTable(connection, query, ResultSetExtensions::extractFields);
+        Optional<Field> id = fields.stream().
+                filter(x -> x.getName().equalsIgnoreCase(Constants.ID)).
+                findFirst();
+        if(id.isPresent())
+            return Integer.parseInt(id.get().getValue());
+        return null;
     }
 
     @Override

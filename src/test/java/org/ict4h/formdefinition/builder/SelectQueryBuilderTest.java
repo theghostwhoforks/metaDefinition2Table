@@ -1,8 +1,10 @@
 package org.ict4h.formdefinition.builder;
 
-import org.ict4h.formdefinition.model.query.FormTableQueryMultiMap;
-import org.ict4h.formdefinition.model.query.SelectQuery;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.ict4h.formdefinition.model.query.FormTableQueryMultiMap;
+import org.ict4h.formdefinition.model.query.Query;
+import org.ict4h.formdefinition.model.query.SelectQuery;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -50,5 +52,11 @@ public class SelectQueryBuilderTest {
         String expected = "SELECT id,modified_by,modified_at FROM doctor_visit WHERE ENTITY_ID = 'W313';";
 
         assertEquals(expected, selectQuery.asSql());
+    }
+
+    @Test
+    public void shouldBuildWhereQueryWithSpecifiedFieldAndValue() throws Exception {
+        Query query = SelectQueryBuilder.with().createSelectQueryFor("doctor_visit", Pair.of("OOGA", "BOOGA"));
+        assertEquals("SELECT * FROM doctor_visit WHERE OOGA = 'BOOGA';",query.asSql());
     }
 }

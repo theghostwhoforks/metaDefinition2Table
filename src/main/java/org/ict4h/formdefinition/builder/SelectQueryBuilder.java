@@ -1,6 +1,7 @@
 package org.ict4h.formdefinition.builder;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.tuple.Pair;
 import org.ict4h.formdefinition.model.Form;
 import org.ict4h.formdefinition.model.FormDefinition;
 import org.ict4h.formdefinition.model.SubForm;
@@ -48,5 +49,11 @@ public class SelectQueryBuilder implements Builder {
 
     public SelectQuery listMetadata(String beneficiaryId, String tableName) {
         return new ListAllMetadataQuery(tableName,beneficiaryId);
+    }
+
+    public Query createSelectQueryFor(String tableName, Pair<String,String> keyValuePair) {
+        String fieldName = keyValuePair.getLeft();
+        String fieldValue = keyValuePair.getRight();
+        return new WhereQuery(tableName,fieldName,fieldValue);
     }
 }

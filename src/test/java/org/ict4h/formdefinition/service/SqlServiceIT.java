@@ -1,5 +1,6 @@
 package org.ict4h.formdefinition.service;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.ict4h.formdefinition.constant.Constants;
 import org.ict4h.formdefinition.executor.impl.StatementExecutorImpl;
 import org.apache.commons.io.FileUtils;
@@ -17,6 +18,8 @@ import java.sql.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SqlServiceIT {
 
@@ -227,5 +230,31 @@ public class SqlServiceIT {
         assertEquals(tableName,metadata.getName());
         assertEquals(entityId,metadata.getEntityId());
         assertEquals("dataEntry2", metadata.getCreatedBy());
+    }
+
+
+    @Test
+    public void shouldGetIdForSpecifiedRecord() throws Exception {
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        String tableName = "doctor_visit";
+        String entityId = "B801";
+        Pair<String, String> pair = Pair.of(Constants.ENTITY_ID, entityId);
+
+        createDoctorVisitTableAndEntity(service);
+
+        int id = service.selectId(connection, tableName, pair);
+        assertNotNull(id);
+    }
+
+    @Test
+    public void shouldNotGetIdWhenRecordDoesNotExist() throws Exception {
+        SqlService service = new SqlServiceImpl(new StatementExecutorImpl());
+        String tableName = "doctor_visit";;
+        Pair<String, String> pair = Pair.of(Constants.ENTITY_ID, "oogabooga");
+
+        createDoctorVisitTableAndEntity(service);
+
+        Integer integer = service.selectId(connection, tableName, pair);
+        assertNull(integer);
     }
 }

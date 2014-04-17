@@ -29,19 +29,19 @@ public class ResultSetExtensions {
         return metaDataList;
     }
 
-    public static List<Field> getParentTableFields(ResultSet resultSet) {
+    public static List<Field> extractFields(ResultSet resultSet) {
         try {
             if(resultSet.next()){
                 return getColumnNames(resultSet.getMetaData()).stream().map(x -> {
                     try {
                         return new Field(x, resultSet.getString(x));
                     } catch (SQLException e) {
-                        throw new MetaDataServiceRuntimeException("",e);
+                        throw new MetaDataServiceRuntimeException("", e);
                     }
                 }).collect(Collectors.toList());
             }
             else{
-                return null;
+                return new ArrayList<>();
             }
         } catch (SQLException e) {
             throw new MetaDataServiceRuntimeException("could not get the data from tables", e);
