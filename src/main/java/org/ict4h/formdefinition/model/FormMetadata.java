@@ -1,6 +1,11 @@
 package org.ict4h.formdefinition.model;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 public class FormMetadata {
+    public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd 'At' hh:mm a");
+
     private String name;
     private Integer instanceId;
     private String entityId;
@@ -32,6 +37,7 @@ public class FormMetadata {
     }
 
     public String getCreatedAt() {
-        return createdAt;
+        Timestamp timestamp = Timestamp.valueOf(createdAt);
+        return FORMAT.format(timestamp);
     }
 }
